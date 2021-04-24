@@ -8,7 +8,9 @@ import 'package:cjdc_money_manager/common/app_number_field.dart';
 import 'package:cjdc_money_manager/common/app_text_field.dart';
 import 'package:cjdc_money_manager/common/full_screen_select.dart';
 import 'package:cjdc_money_manager/constants.dart';
+import 'package:cjdc_money_manager/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:provider/provider.dart';
 
 class TransactionForm extends StatefulWidget {
@@ -28,9 +30,16 @@ class _TransactionFormState extends State<TransactionForm> {
   final TextEditingController toFieldController = TextEditingController();
   final TextEditingController fromFieldController = TextEditingController();
   final TextEditingController notesFieldController = TextEditingController();
+  DateTime dateTimeValue = DateTime.now();
   AppTransactionCategory selectedAppTransactionCategory;
   String selectedTransferAccount;
   bool isSaving = false;
+
+  void setDateTimeValue(DateTime dateTime) {
+    setState(() {
+      dateTimeValue = dateTime;
+    });
+  }
 
   @override
   void initState() {
@@ -46,6 +55,8 @@ class _TransactionFormState extends State<TransactionForm> {
 
       amountFieldController.value =
           TextEditingValue(text: widget.appTransaction.amount.toString());
+
+      dateTimeValue = widget.appTransaction.createdAt;
 
       toFieldController.value =
           TextEditingValue(text: widget.appTransaction.to);
@@ -140,6 +151,7 @@ class _TransactionFormState extends State<TransactionForm> {
             transferAccountFieldValue: selectedTransferAccount,
             setIsSaving: setIsSaving,
             isSaving: isSaving,
+            dateTimeValue: dateTimeValue,
           ),
         ],
       ),
@@ -190,6 +202,43 @@ class _TransactionFormState extends State<TransactionForm> {
                           AppTransactionType.Transfer,
                   enabled: !isSaving,
                   label: 'Amount',
+                ),
+                // DateTimeValue
+                // TODO: Think of better name and create separate component for this
+                Container(
+                  padding: EdgeInsets.zero,
+                  decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(color: Colors.white38)),
+                  ),
+                  child: ListTile(
+                    enabled: true,
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      '${formatDateString(dateTimeValue.toString())} ${formatTimeString(dateTimeValue.toString())}',
+                    ),
+                    trailing: const Icon(Icons.calendar_today_rounded,
+                        color: Colors.white70),
+                    onTap: () {
+                      DatePicker.showDateTimePicker(
+                        context,
+                        maxTime: DateTime.now(),
+                        theme: DatePickerTheme(
+                          backgroundColor: Colors.black,
+                          cancelStyle: TextStyle(
+                            color: Colors.red,
+                          ),
+                          itemStyle: TextStyle(
+                            color: Colors.white,
+                          ),
+                        ),
+                        showTitleActions: true,
+                        currentTime: dateTimeValue,
+                        onChanged: (date) {
+                          setDateTimeValue(date);
+                        },
+                      );
+                    },
+                  ),
                 ),
                 selectedAppTransactionTypeValue == AppTransactionType.Transfer
                     ? AppDropDownField(

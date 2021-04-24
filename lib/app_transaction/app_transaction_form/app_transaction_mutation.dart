@@ -18,6 +18,7 @@ class AppTransactionMutation extends StatelessWidget {
   final TextEditingController notesFieldController;
   final Function setIsSaving;
   final bool isSaving;
+  final DateTime dateTimeValue;
 
   AppTransactionMutation({
     Key key,
@@ -34,6 +35,7 @@ class AppTransactionMutation extends StatelessWidget {
     @required this.notesFieldController,
     @required this.setIsSaving,
     @required this.isSaving,
+    @required this.dateTimeValue,
   }) : super(key: key);
 
   @override
@@ -88,10 +90,8 @@ class AppTransactionMutation extends StatelessWidget {
                     ? transferAccountFieldValue
                     : 'Me',
             type: selectedAppTransactionTypeValue.trim(),
-            createdAt: oldAppTransaction != null
-                ? oldAppTransaction.createdAt
-                : DateTime.now(),
-            updatedAt: DateTime.now(),
+            createdAt: dateTimeValue,
+            updatedAt: dateTimeValue,
           );
 
           if (oldAppTransaction != null) {
