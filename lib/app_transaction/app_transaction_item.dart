@@ -1,7 +1,7 @@
-import 'package:cjdc_money_manager/account/account_model.dart';
+import 'package:cjdc_money_manager/account/account.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_form/app_transaction_form.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
-import 'package:cjdc_money_manager/change_notifiers/cash_flow_data.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class _AppTransactionItemState extends State<AppTransactionItem> {
   @override
   Widget build(BuildContext context) {
     final accounts = Map.fromIterable(
-      Provider.of<CashFlowData>(context).getAccounts(),
+      Provider.of<AccountModelNotifier>(context).getAccounts(),
       key: (account) => account.id,
       value: (account) => account,
     );
@@ -98,11 +98,8 @@ class _AppTransactionItemState extends State<AppTransactionItem> {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (BuildContext context) {
-                        return ChangeNotifierProvider<CashFlowData>.value(
-                          value: CashFlowData.getInstance(),
-                          child: TransactionForm(
-                              appTransaction: widget.appTransaction),
-                        );
+                        return TransactionForm(
+                            appTransaction: widget.appTransaction);
                       },
                     ),
                   );

@@ -1,13 +1,80 @@
-import 'package:cjdc_money_manager/account/account_color_model.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+class AccountColor {
+  final int alpha;
+  final int red;
+  final int green;
+  final int blue;
+  final String name;
+
+  AccountColor({
+    this.alpha,
+    this.red,
+    this.green,
+    this.blue,
+    this.name,
+  });
+
+  static AccountColor parse(Map<String, dynamic> data) {
+    return AccountColor(
+      alpha: data['alpha'],
+      red: data['red'],
+      green: data['green'],
+      blue: data['blue'],
+      name: data['name'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'alpha': alpha,
+      'red': red,
+      'green': green,
+      'blue': blue,
+      'name': name,
+    };
+  }
+
+  @override
+  String toString() {
+    return "{ alpha: $alpha, red: $red, green: $green, blue: $blue, name: $name }";
+  }
+}
+
+class AccountType {
+  final String key;
+  final String value;
+
+  AccountType({this.key, this.value});
+
+  static AccountType parse(Map<String, dynamic> data) {
+    return AccountType(
+      key: data['key'],
+      value: data['value'],
+    );
+  }
+
+  Map<String, dynamic> toMap() {
+    return {
+      'key': key,
+      'value': value,
+    };
+  }
+
+  @override
+  String toString() {
+    return "{ key: $value, value: $value }";
+  }
+}
+
 class Account {
-  final String id;
+  String id;
   final String name;
   double balance;
   final AccountColor color;
+  final AccountType type;
   final DateTime createdAt;
   final DateTime updatedAt;
 
@@ -16,6 +83,7 @@ class Account {
     this.name,
     this.balance,
     this.color,
+    this.type,
     this.createdAt,
     this.updatedAt,
   });
@@ -136,12 +204,8 @@ class Account {
       balance: data['balance'] is int
           ? (data['balance'] as int).toDouble()
           : data['balance'],
-      color: AccountColor(
-        alpha: data['color']['alpha'],
-        red: data['color']['red'],
-        green: data['color']['green'],
-        blue: data['color']['blue'],
-      ),
+      color: AccountColor.parse(data['color']),
+      type: AccountType.parse(data['type']),
       createdAt: data['createdAt'].toDate(),
       updatedAt: data['updatedAt'].toDate(),
     );
@@ -160,6 +224,7 @@ class Account {
       'name': name,
       'balance': balance,
       'color': color.toMap(),
+      'type': type.toMap(),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
     };
@@ -167,6 +232,6 @@ class Account {
 
   @override
   String toString() {
-    return "{ id: $id, name: $name, balance: $balance, color: ${color.toString()}, createdAt: $createdAt, updatedAt: $updatedAt}";
+    return "{ id: $id, name: $name, balance: $balance, color: ${color.toString()}, type: ${type.toString()}, createdAt: $createdAt, updatedAt: $updatedAt}";
   }
 }

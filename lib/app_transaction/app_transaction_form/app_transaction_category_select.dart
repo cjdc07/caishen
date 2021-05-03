@@ -1,6 +1,5 @@
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/common/app_text_field.dart';
-import 'package:cjdc_money_manager/firebase_util.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 

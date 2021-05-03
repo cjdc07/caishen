@@ -1,8 +1,8 @@
-import 'package:cjdc_money_manager/account/account_model.dart';
+import 'package:cjdc_money_manager/account/account.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_form/app_transaction_category_select.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_form/app_transaction_mutation.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
-import 'package:cjdc_money_manager/change_notifiers/cash_flow_data.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
 import 'package:cjdc_money_manager/common/app_dropdown_field.dart';
 import 'package:cjdc_money_manager/common/app_number_field.dart';
 import 'package:cjdc_money_manager/common/app_text_field.dart';
@@ -112,7 +112,7 @@ class _TransactionFormState extends State<TransactionForm> {
 
   void setTransactionTypeField(String appTransactionType) {
     // TODO: only set this after submitting form
-    Provider.of<CashFlowData>(context, listen: false)
+    Provider.of<AccountModelNotifier>(context, listen: false)
         .setSelectedAppTransactionType(appTransactionType);
   }
 
@@ -125,10 +125,11 @@ class _TransactionFormState extends State<TransactionForm> {
   @override
   Widget build(BuildContext context) {
     final Account account =
-        Provider.of<CashFlowData>(context).getSelectedAccount();
+        null; // Provider.of<AccountModel>(context).getSelectedAccount();
 
     final String selectedAppTransactionTypeValue = widget.appTransaction == null
-        ? Provider.of<CashFlowData>(context).getSelectedAppTransactionType()
+        ? Provider.of<AccountModelNotifier>(context)
+            .getSelectedAppTransactionType()
         : widget.appTransaction.type;
 
     return Scaffold(
@@ -245,7 +246,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         defaultValue: selectedTransferAccount,
                         controller: setTransferAccountField,
                         enabled: !isSaving,
-                        items: Provider.of<CashFlowData>(context)
+                        items: Provider.of<AccountModelNotifier>(context)
                             .getAccounts()
                             .where((other) => other.id != account.id)
                             .map(
@@ -282,22 +283,22 @@ class _TransactionFormState extends State<TransactionForm> {
                         ? TextStyle(color: Colors.white)
                         : TextStyle(color: Colors.white60),
                   ),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return AppTransactionCategorySelect(
-                            onTap: (appTransactionCategory) {
-                              setCategoryField(
-                                appTransactionCategory,
-                              );
-                              Navigator.pop(context);
-                            },
-                          );
-                        },
-                      ),
-                    );
-                  },
+                  // onTap: () {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(
+                  //       builder: (BuildContext context) {
+                  //         return AppTransactionCategorySelect(
+                  //           onTap: (appTransactionCategory) {
+                  //             setCategoryField(
+                  //               appTransactionCategory,
+                  //             );
+                  //             Navigator.pop(context);
+                  //           },
+                  //         );
+                  //       },
+                  //     ),
+                  //   );
+                  // },
                 ),
                 FullScreenSelect(
                   enabled: !isSaving,
@@ -309,29 +310,29 @@ class _TransactionFormState extends State<TransactionForm> {
                         ? TextStyle(color: Colors.white)
                         : TextStyle(color: Colors.white60),
                   ),
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (BuildContext context) {
-                          return Scaffold(
-                            appBar: AppBar(
-                              title: Text('Notes'),
-                            ),
-                            body: Padding(
-                              padding: EdgeInsets.all(16),
-                              child: AppTextField(
-                                controller: notesFieldController,
-                                enabled: !isSaving,
-                                label: 'Notes',
-                                minLines: 15,
-                                maxLines: 15,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    );
-                  },
+                  // onTap: () {
+                  //   Navigator.of(context).push(
+                  //     MaterialPageRoute(
+                  //       builder: (BuildContext context) {
+                  //         return Scaffold(
+                  //           appBar: AppBar(
+                  //             title: Text('Notes'),
+                  //           ),
+                  //           body: Padding(
+                  //             padding: EdgeInsets.all(16),
+                  //             child: AppTextField(
+                  //               controller: notesFieldController,
+                  //               enabled: !isSaving,
+                  //               label: 'Notes',
+                  //               minLines: 15,
+                  //               maxLines: 15,
+                  //             ),
+                  //           ),
+                  //         );
+                  //       },
+                  //     ),
+                  //   );
+                  // },
                 ),
               ],
             ),

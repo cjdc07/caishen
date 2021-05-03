@@ -1,4 +1,4 @@
-import 'package:cjdc_money_manager/change_notifiers/cash_flow_data.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
 import 'package:cjdc_money_manager/common/pill_button.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +14,7 @@ class TransactionFilter extends StatelessWidget {
 
   void filterTransactionsByType(
       BuildContext context, String appTransactiontype) {
-    Provider.of<CashFlowData>(context, listen: false)
+    Provider.of<AccountModelNotifier>(context, listen: false)
         .setSelectedAppTransactionType(appTransactiontype);
   }
 

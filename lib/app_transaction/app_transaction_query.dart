@@ -1,9 +1,9 @@
-import 'package:cjdc_money_manager/account/account_model.dart';
+import 'package:cjdc_money_manager/account/account.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_filter.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_item.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_query_loading_indicator.dart';
-import 'package:cjdc_money_manager/change_notifiers/cash_flow_data.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,9 +19,9 @@ class AppTransactionQuery extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<CashFlowData>(
+    return Consumer<AccountModelNotifier>(
       builder: (context, cashFlowData, child) {
-        Account account = cashFlowData.getSelectedAccount();
+        Account account = null; // cashFlowData.getSelectedAccount();
 
         if (account == null) {
           // TODO: Show no data screen

@@ -1,4 +1,4 @@
-import 'package:cjdc_money_manager/account/account_model.dart';
+import 'package:cjdc_money_manager/account/account.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
