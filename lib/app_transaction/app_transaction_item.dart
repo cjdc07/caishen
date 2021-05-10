@@ -120,6 +120,26 @@ class _AppTransactionItemState extends State<AppTransactionItem> {
           // Remove appTransaction to source and target account in cache
           updatedAppTransactions[sourceAccount.id]
               .removeWhere((e) => e.id == widget.appTransaction.id);
+
+          if (updatedAppTransactions[targetAccount.id] == null) {
+            // load data from firebase to cache
+            updatedAppTransactions[targetAccount.id] = [
+              ...(await appTransactionsRef
+                      .where('account',
+                          isEqualTo: accountsRef.doc(targetAccount.id))
+                      .get())
+                  .docs,
+              ...(await appTransactionsRef
+                      .where('to', isEqualTo: targetAccount.id)
+                      .get())
+                  .docs
+            ].map((appTransaction) {
+              Map<String, dynamic> data = appTransaction.data();
+              data['id'] = appTransaction.id;
+              return AppTransaction.parse(data);
+            }).toList();
+          }
+
           updatedAppTransactions[targetAccount.id]
               .removeWhere((e) => e.id == widget.appTransaction.id);
 

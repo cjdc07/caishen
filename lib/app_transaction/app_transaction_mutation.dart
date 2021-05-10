@@ -57,23 +57,22 @@ class AppTransactionMutation extends StatelessWidget {
 
         setIsSaving(true);
 
-        final CollectionReference appTransactionsCollectionRef =
+        final CollectionReference appTransactionsRef =
             FirebaseFirestore.instance.collection('appTransactions');
 
-        final CollectionReference accountCollectionRef =
+        final CollectionReference accountsRef =
             FirebaseFirestore.instance.collection('accounts');
 
-        final CollectionReference appTransactionCategoryCollectionRef =
+        final CollectionReference appTransactionCategoriesRef =
             FirebaseFirestore.instance.collection('appTransactionCategories');
 
-        final DocumentReference accountDocumentRef =
-            accountCollectionRef.doc(accountId);
+        final DocumentReference accountDocumentRef = accountsRef.doc(accountId);
 
         final DocumentReference appTransactionCategoryDocumentRef =
             appTransactionTypeValue != TRANSFER
-                ? appTransactionCategoryCollectionRef
+                ? appTransactionCategoriesRef
                     .doc(appTransactionCategoryFieldValue.id)
-                : (await appTransactionCategoryCollectionRef
+                : (await appTransactionCategoriesRef
                         .where('key', isEqualTo: 'transfer')
                         .get())
                     .docs[0]
@@ -117,7 +116,7 @@ class AppTransactionMutation extends StatelessWidget {
             new Map.from(appTransactions);
 
         if (oldAppTransaction != null) {
-          appTransactionsCollectionRef
+          appTransactionsRef
               .doc(oldAppTransaction.id)
               .update(appTransaction.toMap());
 
@@ -134,7 +133,7 @@ class AppTransactionMutation extends StatelessWidget {
           }
         } else {
           DocumentReference docRef =
-              await appTransactionsCollectionRef.add(appTransaction.toMap());
+              await appTransactionsRef.add(appTransaction.toMap());
 
           appTransaction.id = docRef.id;
 
@@ -156,11 +155,30 @@ class AppTransactionMutation extends StatelessWidget {
                 .getAccounts()
                 .singleWhere((account) => account.id == appTransaction.to);
             targetAccount.add(appTransaction.amount);
-            await accountCollectionRef
+            await accountsRef
                 .doc(appTransaction.to)
                 .update(targetAccount.toMap());
 
             // Add appTransaction to target account too in cache
+            if (updatedAppTransactions[targetAccount.id] == null) {
+              // load data from firebase to cache
+              updatedAppTransactions[targetAccount.id] = [
+                ...(await appTransactionsRef
+                        .where('account',
+                            isEqualTo: accountsRef.doc(targetAccount.id))
+                        .get())
+                    .docs,
+                ...(await appTransactionsRef
+                        .where('to', isEqualTo: targetAccount.id)
+                        .get())
+                    .docs
+              ].map((appTransaction) {
+                Map<String, dynamic> data = appTransaction.data();
+                data['id'] = appTransaction.id;
+                return AppTransaction.parse(data);
+              }).toList();
+            }
+
             updatedAppTransactions[targetAccount.id].add(appTransaction);
 
             // Update target account in cache

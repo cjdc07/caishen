@@ -6,6 +6,7 @@ import 'package:cjdc_money_manager/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import '../extensions.dart';
 
 class AppTransactions extends StatelessWidget {
   final CollectionReference appTransactionsRef =
@@ -110,7 +111,7 @@ class AppTransactionsCardList extends StatelessWidget {
     if (appTransactions.isEmpty) {
       return Center(
         child: Text(
-          'No $appTransactiontype records!',
+          'No ${appTransactiontype.capitalize()} records!',
           style: TextStyle(fontSize: 16, color: Colors.cyan),
         ),
       );
