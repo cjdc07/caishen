@@ -1,22 +1,16 @@
-import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
 import 'package:cjdc_money_manager/common/pill_button.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class TransactionFilter extends StatelessWidget {
   final String type;
+  final Function setAppTransactionType;
 
   TransactionFilter({
     Key key,
     this.type,
+    this.setAppTransactionType,
   }) : super(key: key);
-
-  void filterTransactionsByType(
-      BuildContext context, String appTransactiontype) {
-    Provider.of<AccountModelNotifier>(context, listen: false)
-        .setSelectedAppTransactionType(appTransactiontype);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +18,7 @@ class TransactionFilter extends StatelessWidget {
       alignment: MainAxisAlignment.start,
       children: <Widget>[
         PillButton(
-          isActive: type == AppTransactionType.Income,
+          isActive: type == INCOME,
           label: Text(
             'Income',
             style: TextStyle(
@@ -32,13 +26,12 @@ class TransactionFilter extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          onPress: () => filterTransactionsByType(
-            context,
-            AppTransactionType.Income,
+          onPress: () => setAppTransactionType(
+            INCOME,
           ),
         ),
         PillButton(
-          isActive: type == AppTransactionType.Expense,
+          isActive: type == EXPENSE,
           label: Text(
             'Expenses',
             style: TextStyle(
@@ -46,13 +39,12 @@ class TransactionFilter extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          onPress: () => filterTransactionsByType(
-            context,
-            AppTransactionType.Expense,
+          onPress: () => setAppTransactionType(
+            EXPENSE,
           ),
         ),
         PillButton(
-          isActive: type == AppTransactionType.Transfer,
+          isActive: type == TRANSFER,
           label: Text(
             'Transfers',
             style: TextStyle(
@@ -60,9 +52,8 @@ class TransactionFilter extends StatelessWidget {
               fontWeight: FontWeight.bold,
             ),
           ),
-          onPress: () => filterTransactionsByType(
-            context,
-            AppTransactionType.Transfer,
+          onPress: () => setAppTransactionType(
+            TRANSFER,
           ),
         ),
       ],

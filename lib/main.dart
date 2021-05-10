@@ -1,6 +1,8 @@
-import 'package:cjdc_money_manager/account/account.dart';
+import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/app_navigation.dart';
-import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
+import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
 import 'package:cjdc_money_manager/resources/app_config.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,7 +16,8 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AccountModelNotifier())
+        ChangeNotifierProvider(create: (context) => AccountNotifier()),
+        ChangeNotifierProvider(create: (context) => AppTransactionNotifier())
       ],
       child: MaterialApp(
         title: AppConfig.of(context).appTitle,
@@ -45,10 +48,17 @@ class App extends StatelessWidget {
               final CollectionReference accountsRef =
                   FirebaseFirestore.instance.collection('accounts');
 
-              return FutureBuilder<QuerySnapshot>(
-                future: accountsRef.get(),
+              final CollectionReference appTransactionsCategoriesRef =
+                  FirebaseFirestore.instance
+                      .collection('appTransactionCategories');
+
+              return FutureBuilder<List<QuerySnapshot>>(
+                future: Future.wait([
+                  accountsRef.get(),
+                  appTransactionsCategoriesRef.get(),
+                ]),
                 builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
+                    AsyncSnapshot<List<QuerySnapshot>> snapshot) {
                   if (snapshot.hasError) {
                     return Scaffold(
                       body: Center(child: Text('Something went wrong')),
@@ -61,9 +71,12 @@ class App extends StatelessWidget {
                     );
                   }
 
-                  List<QueryDocumentSnapshot> docs = snapshot.data.docs;
+                  QuerySnapshot accountsSnapshot = snapshot.data[0];
+                  QuerySnapshot appTransactionCategoriesSnapshot =
+                      snapshot.data[1];
 
-                  final List<Account> accounts = Account.parseList(docs.map(
+                  final List<Account> accounts =
+                      Account.parseList(accountsSnapshot.docs.map(
                     (account) {
                       Map<String, dynamic> data = account.data();
                       data['id'] = account.id;
@@ -71,7 +84,18 @@ class App extends StatelessWidget {
                     },
                   ).toList());
 
-                  return AppNavigation(accounts: accounts);
+                  List<AppTransactionCategory> appTransactionCategories =
+                      appTransactionCategoriesSnapshot.docs
+                          .map((appTransactionCategory) {
+                    Map<String, dynamic> data = appTransactionCategory.data();
+                    data['id'] = appTransactionCategory.id;
+                    return AppTransactionCategory.parse(data);
+                  }).toList();
+
+                  return AppNavigation(
+                    accounts: accounts,
+                    appTransactionCategories: appTransactionCategories,
+                  );
                 },
               );
             }

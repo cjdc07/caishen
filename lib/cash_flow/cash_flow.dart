@@ -1,9 +1,11 @@
 import 'package:cjdc_money_manager/account/account_form.dart';
 import 'package:cjdc_money_manager/account/account_card.dart';
-import 'package:cjdc_money_manager/account/account.dart';
-import 'package:cjdc_money_manager/app_transaction/app_transaction_form/app_transaction_form.dart';
-import 'package:cjdc_money_manager/app_transaction/app_transaction_query.dart';
-import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
+import 'package:cjdc_money_manager/account/account_model.dart';
+import 'package:cjdc_money_manager/app_transaction/app_transaction_filter.dart';
+import 'package:cjdc_money_manager/app_transaction/app_transaction_form.dart';
+import 'package:cjdc_money_manager/app_transaction/app_transactions.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
+import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/resources/app_config.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,11 +33,11 @@ class _CashFlowState extends State<CashFlow> {
     super.initState();
 
     setState(() {
-      _filteredAccounts = context.read<AccountModelNotifier>().getAccounts();
+      _filteredAccounts = context.read<AccountNotifier>().getAccounts();
 
       if (_filteredAccounts != null && _filteredAccounts.length > 0) {
         context
-            .read<AccountModelNotifier>()
+            .read<AccountNotifier>()
             .setSelectedAccount(_filteredAccounts[0]);
       }
     });
@@ -43,10 +45,16 @@ class _CashFlowState extends State<CashFlow> {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AccountModelNotifier>(
+    // TODO: prints twice when creating first account
+    print('cashflow: you should only see me once');
+    return Consumer<AccountNotifier>(
       builder: (context, accountModel, child) {
         _filteredAccounts = accountModel.getAccounts();
         Account selectedAccount = accountModel.getSelectedAccount();
+        String appTransactiontype =
+            accountModel.getSelectedAppTransactionType() != null
+                ? accountModel.getSelectedAppTransactionType()
+                : INCOME;
 
         if (_filteredAccounts.isEmpty && selectedAccount == null) {
           return Center(
@@ -73,10 +81,8 @@ class _CashFlowState extends State<CashFlow> {
                     (value) => setState(
                       () {
                         _filteredAccounts =
-                            context.read<AccountModelNotifier>().getAccounts();
-                        context
-                            .read<AccountModelNotifier>()
-                            .getSelectedAccount();
+                            context.read<AccountNotifier>().getAccounts();
+                        context.read<AccountNotifier>().getSelectedAccount();
                       },
                     ),
                   );
@@ -127,7 +133,11 @@ class _CashFlowState extends State<CashFlow> {
                                       Navigator.of(context).push(
                                         MaterialPageRoute(
                                           builder: (BuildContext context) {
-                                            return TransactionForm();
+                                            return TransactionForm(
+                                              account: selectedAccount,
+                                              appTransactiontype:
+                                                  appTransactiontype,
+                                            );
                                           },
                                         ),
                                       );
@@ -170,7 +180,9 @@ class _CashFlowState extends State<CashFlow> {
               /* Account Title */
               child: Row(
                 children: [
-                  Text(selectedAccount.name),
+                  Text(
+                    selectedAccount.name,
+                  ),
                   Icon(Icons.arrow_drop_down),
                 ],
               ),
@@ -239,10 +251,14 @@ class _CashFlowState extends State<CashFlow> {
 
                                       return ListTile(
                                         onTap: () {
-                                          accountModel.setSelectedAccount(
-                                            account,
-                                            notify: true,
-                                          );
+                                          if (account.id !=
+                                              selectedAccount.id) {
+                                            accountModel.setSelectedAccount(
+                                              account,
+                                              notify: true,
+                                            );
+                                          }
+
                                           Navigator.pop(context);
                                         },
                                         title: Text(
@@ -322,17 +338,37 @@ class _CashFlowState extends State<CashFlow> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               AccountCard(account: selectedAccount),
-              AppConfig.of(context).buildFlavor == "Development"
-                  ? Padding(
-                      padding: EdgeInsets.symmetric(vertical: 4),
-                      child: Center(
-                        child: Text(
-                          'Running in ${AppConfig.of(context).buildFlavor} mode',
-                        ),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    AppConfig.of(context).buildFlavor == "Development"
+                        ? Padding(
+                            padding: EdgeInsets.symmetric(vertical: 4),
+                            child: Center(
+                              child: Text(
+                                'Running in ${AppConfig.of(context).buildFlavor} mode',
+                              ),
+                            ),
+                          )
+                        : Container(),
+                    TransactionFilter(
+                      type: appTransactiontype,
+                      setAppTransactionType: (type) =>
+                          context.read<AccountNotifier>().setAppTransactionType(
+                                type,
+                                notify: true,
+                              ),
+                    ),
+                    Expanded(
+                      child: AppTransactions(
+                        account: selectedAccount,
+                        appTransactiontype: appTransactiontype,
                       ),
                     )
-                  : Container(),
-              // Expanded(child: AppTransactionQuery()),
+                  ],
+                ),
+              ),
             ],
           ),
         );

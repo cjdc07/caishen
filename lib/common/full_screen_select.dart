@@ -1,28 +1,12 @@
 import 'package:flutter/material.dart';
 
-class FullScreenSelectItem {
-  final String label;
-  final String value;
-
-  FullScreenSelectItem({
-    this.label,
-    this.value,
-  });
-
-  Map<String, dynamic> toMap() {
-    return {
-      'label': label,
-      'value': value,
-    };
-  }
-}
-
 class FullScreenSelect extends StatelessWidget {
   final bool enabled;
   final Widget fieldTitle;
   final String title;
   final Function onTap;
   final List<FullScreenSelectItem> items;
+  final List<Widget> actions;
 
   FullScreenSelect({
     Key key,
@@ -31,6 +15,7 @@ class FullScreenSelect extends StatelessWidget {
     @required this.title,
     @required this.onTap,
     this.items,
+    this.actions,
   }) : super(key: key);
 
   @override
@@ -53,6 +38,7 @@ class FullScreenSelect extends StatelessWidget {
                 return Scaffold(
                   appBar: AppBar(
                     title: Text(title),
+                    actions: actions,
                   ),
                   body: ListView.builder(
                     padding: EdgeInsets.only(bottom: 24.0),
@@ -76,5 +62,22 @@ class FullScreenSelect extends StatelessWidget {
         },
       ),
     );
+  }
+}
+
+class FullScreenSelectItem {
+  final String label;
+  final String value;
+
+  FullScreenSelectItem({
+    this.label,
+    this.value,
+  });
+
+  Map<String, dynamic> toMap() {
+    return {
+      'label': label,
+      'value': value,
+    };
   }
 }

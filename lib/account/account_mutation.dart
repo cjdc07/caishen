@@ -1,14 +1,14 @@
-import 'package:cjdc_money_manager/account/account.dart';
+import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
-import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 // TODO:
-// 1. Create AppTransactionCategory class with key, value, type
-// 2. Update appTransactionCategories in prod
+// 1. Delete name field in appTransactionCategories
 class AccountMutation extends StatelessWidget {
   final formKey;
   final TextEditingController nameFieldController;
@@ -67,13 +67,15 @@ class AccountMutation extends StatelessWidget {
           updatedAt: now,
         );
 
-        List<Account> accounts =
-            context.read<AccountModelNotifier>().getAccounts();
+        List<Account> accounts = context.read<AccountNotifier>().getAccounts();
         List<Account> updatedAccounts = new List.from(accounts);
 
+        AppTransaction appTransaction;
+        DocumentReference appTransactionDocRef;
+
         if (oldAccount != null) {
-          await accountCollectionRef.doc(oldAccount.id).update(account.toMap());
-          int index = updatedAccounts.indexWhere((acc) => acc.id == account.id);
+          await accountCollectionRef.doc(account.id).update(account.toMap());
+          int index = updatedAccounts.indexWhere((e) => e.id == account.id);
           updatedAccounts[index] = account;
 
           // TODO: add alert when this happens
@@ -84,7 +86,7 @@ class AccountMutation extends StatelessWidget {
                     .where('key', isEqualTo: 'accountAdjustment')
                     .get();
 
-            AppTransaction appTransaction = new AppTransaction(
+            appTransaction = new AppTransaction(
               account: accountCollectionRef.doc(oldAccount.id),
               amount: account.balance - oldAccount.balance,
               createdAt: now,
@@ -93,10 +95,11 @@ class AccountMutation extends StatelessWidget {
               category: appTransactionCategorySnapshot.docs[0].reference,
               description: 'Account Adjustment',
               to: 'me',
-              type: AppTransactionType.Income,
+              type: INCOME,
             );
 
-            appTransactionsCollectionRef.add(appTransaction.toMap());
+            appTransactionDocRef =
+                await appTransactionsCollectionRef.add(appTransaction.toMap());
           } else if (account.balance < oldAccount.balance) {
             // Add expense transaction if new balance < old balance
             QuerySnapshot appTransactionCategorySnapshot =
@@ -104,8 +107,8 @@ class AccountMutation extends StatelessWidget {
                     .where('key', isEqualTo: 'accountAdjustment')
                     .get();
 
-            AppTransaction appTransaction = new AppTransaction(
-              account: accountCollectionRef.doc(oldAccount.id),
+            appTransaction = new AppTransaction(
+              account: accountCollectionRef.doc(account.id),
               amount: oldAccount.balance - account.balance,
               createdAt: now,
               updatedAt: now,
@@ -113,10 +116,11 @@ class AccountMutation extends StatelessWidget {
               category: appTransactionCategorySnapshot.docs[0].reference,
               description: 'Account Adjustment',
               to: 'me',
-              type: AppTransactionType.Expense,
+              type: EXPENSE,
             );
 
-            appTransactionsCollectionRef.add(appTransaction.toMap());
+            appTransactionDocRef =
+                await appTransactionsCollectionRef.add(appTransaction.toMap());
           }
         } else {
           DocumentReference docRef =
@@ -132,7 +136,7 @@ class AccountMutation extends StatelessWidget {
                   .where('key', isEqualTo: 'initialBalance')
                   .get();
 
-          AppTransaction appTransaction = new AppTransaction(
+          appTransaction = new AppTransaction(
             account: docRef,
             amount: account.balance,
             createdAt: now,
@@ -141,16 +145,38 @@ class AccountMutation extends StatelessWidget {
             category: appTransactionCategorySnapshot.docs[0].reference,
             description: 'Initial Balance',
             to: 'me',
-            type: AppTransactionType.Income,
+            type: INCOME,
           );
 
-          appTransactionsCollectionRef.add(appTransaction.toMap());
+          appTransactionDocRef =
+              await appTransactionsCollectionRef.add(appTransaction.toMap());
         }
 
-        context.read<AccountModelNotifier>().setAccounts(updatedAccounts);
+        /* Update Accounts Cache */
+        context.read<AccountNotifier>().setAccounts(updatedAccounts);
         context
-            .read<AccountModelNotifier>()
+            .read<AccountNotifier>()
             .setSelectedAccount(account, notify: true);
+
+        /* Update AppTransactions Cache */
+        Map<String, List<AppTransaction>> appTransactions =
+            context.read<AppTransactionNotifier>().getAppTransactions();
+        Map<String, List<AppTransaction>> updatedAppTransactions =
+            new Map.from(appTransactions);
+
+        if (appTransaction != null) {
+          appTransaction.id = appTransactionDocRef.id;
+
+          if (updatedAppTransactions.containsKey(account.id)) {
+            updatedAppTransactions[account.id].add(appTransaction);
+          } else {
+            updatedAppTransactions[account.id] = [appTransaction];
+          }
+
+          context
+              .read<AppTransactionNotifier>()
+              .setAppTransactions(updatedAppTransactions, notify: true);
+        }
 
         Navigator.pop(context);
       },

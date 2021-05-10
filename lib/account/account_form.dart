@@ -1,6 +1,6 @@
-import 'package:cjdc_money_manager/account/account.dart';
+import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/account/account_mutation.dart';
-import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/common/app_number_field.dart';
 import 'package:cjdc_money_manager/common/app_text_field.dart';
 import 'package:cjdc_money_manager/common/full_screen_select.dart';
@@ -8,9 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// TODOs in Firestore prod
-// 1. Add type to all accounts
-// 2. Add name to account.color
+// TODO: in Firestore prod
+// 1. Add name to account.color
 
 List<AccountColor> colors = [
   new AccountColor(name: 'blue', alpha: 255, red: 20, green: 130, blue: 184),
@@ -32,6 +31,10 @@ List<FullScreenSelectItem> items = [
   new FullScreenSelectItem(value: 'timeDeposit', label: 'Time Deposit'),
   new FullScreenSelectItem(value: 'digitalWallet', label: 'Digital Wallet'),
   new FullScreenSelectItem(value: 'cash', label: 'Cash'),
+  new FullScreenSelectItem(value: 'payroll', label: 'Payroll'),
+  new FullScreenSelectItem(value: 'bonds', label: 'Bonds'),
+  new FullScreenSelectItem(value: 'stockBroker', label: 'Stock Broker'),
+  new FullScreenSelectItem(value: 'mutualFund', label: 'Mutual Fund'),
 ];
 
 class AccountForm extends StatefulWidget {
@@ -138,6 +141,7 @@ class _AccountFormState extends State<AccountForm> {
                 ),
 
                 /* Account type field */
+                // TODO: Add validation here!
                 FullScreenSelect(
                   enabled: !isLoading,
                   title: 'Account Type',
@@ -230,11 +234,12 @@ class _AccountFormState extends State<AccountForm> {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title:
-                                        Text('Deleting ${widget.account.name}'),
+                                        Text('Delete ${widget.account.name}'),
                                     content: SingleChildScrollView(
                                       child: ListBody(
                                         children: <Widget>[
-                                          Text('Are you sure?'),
+                                          Text(
+                                              'This will also delete all associated transactions.\n\nAre you sure?'),
                                         ],
                                       ),
                                     ),
@@ -254,25 +259,23 @@ class _AccountFormState extends State<AccountForm> {
                                         ),
                                         onPressed: () async {
                                           final CollectionReference
-                                              accountCollectionRef =
-                                              FirebaseFirestore.instance
+                                              accountsRef = FirebaseFirestore
+                                                  .instance
                                                   .collection('accounts');
 
                                           // Delete all associated transactions
                                           final CollectionReference
-                                              appTransactionsCollectionRef =
+                                              appTransactionsRef =
                                               FirebaseFirestore.instance
                                                   .collection(
                                                       'appTransactions');
 
                                           QuerySnapshot appTransactionSnapshot =
-                                              await appTransactionsCollectionRef
+                                              await appTransactionsRef
                                                   .where(
                                                     'account',
-                                                    isEqualTo:
-                                                        accountCollectionRef
-                                                            .doc(widget
-                                                                .account.id),
+                                                    isEqualTo: accountsRef
+                                                        .doc(widget.account.id),
                                                   )
                                                   .get();
 
@@ -284,12 +287,12 @@ class _AccountFormState extends State<AccountForm> {
                                           );
 
                                           // Delete Account
-                                          await accountCollectionRef
+                                          await accountsRef
                                               .doc(widget.account.id)
                                               .delete();
 
                                           List<Account> accounts =
-                                              Provider.of<AccountModelNotifier>(
+                                              Provider.of<AccountNotifier>(
                                                       context,
                                                       listen: false)
                                                   .getAccounts();
@@ -303,7 +306,7 @@ class _AccountFormState extends State<AccountForm> {
                                           );
 
                                           context
-                                              .read<AccountModelNotifier>()
+                                              .read<AccountNotifier>()
                                               .setSelectedAccount(
                                                 updatedAccounts.length > 0
                                                     ? updatedAccounts[0]
@@ -311,7 +314,7 @@ class _AccountFormState extends State<AccountForm> {
                                               );
 
                                           context
-                                              .read<AccountModelNotifier>()
+                                              .read<AccountNotifier>()
                                               .setAccounts(
                                                 updatedAccounts,
                                                 notify: true,

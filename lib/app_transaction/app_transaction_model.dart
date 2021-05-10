@@ -73,7 +73,6 @@ class AppTransaction {
   }
 
   Future<AppTransactionCategory> getAppTransactionCategory() async {
-    // TODO: Something wrong with this after updating transaction
     return AppTransactionCategory.parse((await category.get()).data());
   }
 
@@ -100,18 +99,32 @@ class AppTransaction {
 
 class AppTransactionCategory {
   String id;
-  final String name;
+  final String key;
+  final String type;
+  final String value;
 
-  AppTransactionCategory({this.id, this.name});
+  AppTransactionCategory({
+    this.id,
+    this.key,
+    this.type,
+    this.value,
+  });
 
   Map<String, dynamic> toMap() {
     return {
-      'name': name,
+      'key': key,
+      'type': type,
+      'value': value,
     };
   }
 
   static AppTransactionCategory parse(Map<String, dynamic> data) {
-    return AppTransactionCategory(id: data['id'], name: data['name']);
+    return AppTransactionCategory(
+      id: data['id'],
+      key: data['key'],
+      type: data['type'],
+      value: data['value'],
+    );
   }
 
   static List<AppTransactionCategory> parseList(List appTransactionCategories) {
@@ -125,6 +138,6 @@ class AppTransactionCategory {
 
   @override
   String toString() {
-    return '{ id: $id, name: $name }';
+    return '{ key: $key, type: $type, value: $value }';
   }
 }

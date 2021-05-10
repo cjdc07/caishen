@@ -1,5 +1,5 @@
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
-import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/firebase_util.dart';
 import 'package:cjdc_money_manager/utils.dart';
@@ -66,16 +66,14 @@ class _StatisticsState extends State<Statistics> {
     };
 
     appTransactionsStats['BALANCE']['total'] =
-        Provider.of<AccountModelNotifier>(context, listen: false)
-            .getAccounts()
-            .fold(
-                0,
-                (previousValue, account) =>
-                    previousValue.toDouble() + account.balance);
+        Provider.of<AccountNotifier>(context, listen: false).getAccounts().fold(
+            0,
+            (previousValue, account) =>
+                previousValue.toDouble() + account.balance);
 
     Iterable<AppTransaction> filteredAppTransactions =
         appTransactions.where((appTransaction) {
-      if (appTransaction.type == AppTransactionType.Transfer) {
+      if (appTransaction.type == TRANSFER) {
         return false;
       }
 

@@ -1,4 +1,4 @@
-import 'package:cjdc_money_manager/account/account.dart';
+import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';

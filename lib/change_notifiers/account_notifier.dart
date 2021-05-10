@@ -1,11 +1,11 @@
-import 'package:cjdc_money_manager/account/account.dart';
+import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:flutter/material.dart';
 
-class AccountModelNotifier extends ChangeNotifier {
+class AccountNotifier extends ChangeNotifier {
   List<Account> _accounts;
   Account _selectedAccount;
-  String _selectedAppTransactionType = AppTransactionType.Income;
+  String _selectedAppTransactionType = INCOME;
 
   List<Account> getAccounts() => _accounts;
 
@@ -27,7 +27,10 @@ class AccountModelNotifier extends ChangeNotifier {
     }
   }
 
-  void setSelectedAppTransactionType(String appTransactionType) {
+  void setAppTransactionType(String appTransactionType, {bool notify = false}) {
     _selectedAppTransactionType = appTransactionType;
+    if (notify) {
+      notifyListeners();
+    }
   }
 }

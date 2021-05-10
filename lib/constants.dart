@@ -1,5 +1,3 @@
-class AppTransactionType {
-  static const String Income = 'income';
-  static const String Expense = 'expense';
-  static const String Transfer = 'transfer';
-}
+const String INCOME = 'INCOME';
+const String EXPENSE = 'EXPENSE';
+const String TRANSFER = 'TRANSFER';

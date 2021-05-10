@@ -1,13 +1,20 @@
-import 'package:cjdc_money_manager/account/account.dart';
+import 'package:cjdc_money_manager/account/account_model.dart';
+import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/cash_flow/cash_flow.dart';
-import 'package:cjdc_money_manager/change_notifiers/account_model_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
 import 'package:cjdc_money_manager/statistics/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AppNavigation extends StatefulWidget {
   final List<Account> accounts;
-  const AppNavigation({Key key, this.accounts}) : super(key: key);
+  final List<AppTransactionCategory> appTransactionCategories;
+  const AppNavigation({
+    Key key,
+    this.accounts,
+    this.appTransactionCategories,
+  }) : super(key: key);
 
   @override
   _AppNavigationState createState() => _AppNavigationState();
@@ -29,8 +36,10 @@ class _AppNavigationState extends State<AppNavigation> {
   @override
   void initState() {
     super.initState();
-    Provider.of<AccountModelNotifier>(context, listen: false)
+    Provider.of<AccountNotifier>(context, listen: false)
         .setAccounts(widget.accounts);
+    Provider.of<AppTransactionNotifier>(context, listen: false)
+        .setAppTransactionCategories(widget.appTransactionCategories);
   }
 
   void _onItemTapped(int index) {
