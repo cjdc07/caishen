@@ -14,7 +14,7 @@ class PillButton extends StatelessWidget {
       padding: EdgeInsets.all(12.0),
       onPressed: onPress,
       child: label,
-      color: isActive ? Colors.cyan : Colors.grey[800],
+      color: isActive ? Colors.cyan : Colors.grey[900],
       textColor: isActive ? Colors.grey[200] : Colors.grey,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(32.0),

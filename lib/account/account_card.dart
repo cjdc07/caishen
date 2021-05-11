@@ -33,7 +33,7 @@ class AccountCard extends StatelessWidget {
                   Text(
                     formatToCurrency(account.balance),
                     style: TextStyle(
-                      color: Colors.grey[100],
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

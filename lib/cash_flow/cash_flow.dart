@@ -331,7 +331,6 @@ class _CashFlowState extends State<CashFlow> {
                 },
               ).whenComplete(() => onModalBottomSheetClose()),
             ),
-            backgroundColor: Colors.grey[850],
             elevation: 0.0,
           ),
           body: Column(

@@ -21,20 +21,20 @@ class App extends StatelessWidget {
       ],
       child: MaterialApp(
         title: AppConfig.of(context).appTitle,
-        theme: ThemeData.dark(),
-
-        // TODO: Forgot why I used custom theme
-        //       Create custom theme in another file
-        // theme: ThemeData(
-        //   primarySwatch: Colors.grey,
-        //   primaryColor: Colors.black,
-        //   brightness: Brightness.dark,
-        //   backgroundColor: const Color(0xFF212121),
-        //   accentColor: Colors.white,
-        //   accentIconTheme: IconThemeData(color: Colors.black),
-        //   dividerColor: Colors.transparent,
-        // ),
-
+        theme: ThemeData(
+          bottomNavigationBarTheme: BottomNavigationBarThemeData(
+            backgroundColor: Colors.black,
+          ),
+          bottomSheetTheme: BottomSheetThemeData(
+            backgroundColor: Colors.grey[900],
+          ),
+          accentColor: Colors.cyan,
+          cardColor: Colors.grey[900],
+          primaryColor: Colors.black,
+          brightness: Brightness.dark,
+          scaffoldBackgroundColor: Colors.black,
+          dividerColor: Colors.transparent,
+        ),
         home: FutureBuilder(
           future: _initialization,
           builder: (context, snapshot) {

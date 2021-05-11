@@ -157,7 +157,7 @@ class AppTransactionsCardList extends StatelessWidget {
                       style: TextStyle(
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey[350],
+                        color: Colors.grey[200],
                       ),
                     ),
                     children: transactionItems,
