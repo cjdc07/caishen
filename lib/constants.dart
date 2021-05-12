@@ -15,8 +15,6 @@ List<AccountColor> colors = [
   new AccountColor(name: 'red', alpha: 255, red: 207, green: 102, blue: 121),
   new AccountColor(name: 'grey', alpha: 255, red: 128, green: 128, blue: 128),
   new AccountColor(name: 'orange', alpha: 255, red: 255, green: 140, blue: 0),
-  new AccountColor(name: 'black', alpha: 255, red: 0, green: 0, blue: 0),
-  new AccountColor(name: 'white', alpha: 255, red: 255, green: 255, blue: 255),
 ];
 
 List<FullScreenSelectItem> accountTypeItems = [

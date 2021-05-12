@@ -108,7 +108,7 @@ class _CashFlowState extends State<CashFlow> {
                       bottom: true,
                       child: Container(
                         padding: EdgeInsets.symmetric(horizontal: 24.0),
-                        height: MediaQuery.of(context).size.height / 5,
+                        height: MediaQuery.of(context).size.height / 6,
                         child: Center(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -118,40 +118,38 @@ class _CashFlowState extends State<CashFlow> {
                                 onPressed: () => Navigator.pop(context),
                               ),
                               Container(
-                                margin: EdgeInsets.only(bottom: 16.0),
-                                child: FlatButton(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8.0),
+                                child: TextButton(
+                                  child: const Text(
+                                    'Create Transaction',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.cyan,
                                     ),
-                                    color: Colors.cyan,
-                                    child: const Text(
-                                      'Create Transaction',
-                                      style: TextStyle(fontSize: 16),
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return TransactionForm(
-                                              account: selectedAccount,
-                                              appTransactiontype:
-                                                  appTransactiontype,
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    }),
+                                  ),
+                                  onPressed: () {
+                                    Navigator.pop(context);
+                                    Navigator.of(context).push(
+                                      MaterialPageRoute(
+                                        builder: (BuildContext context) {
+                                          return TransactionForm(
+                                            account: selectedAccount,
+                                            appTransactiontype:
+                                                appTransactiontype,
+                                          );
+                                        },
+                                      ),
+                                    );
+                                  },
+                                ),
                               ),
                               Container(
-                                child: FlatButton(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8.0),
-                                  ),
-                                  color: Colors.cyan,
+                                child: TextButton(
                                   child: const Text(
                                     'Update Account',
-                                    style: TextStyle(fontSize: 16),
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      color: Colors.cyan,
+                                    ),
                                   ),
                                   onPressed: () {
                                     Navigator.pop(context);
@@ -188,6 +186,7 @@ class _CashFlowState extends State<CashFlow> {
               ),
               onTap: () => showModalBottomSheet<void>(
                 /* Custom Account Picker Bottom Modal */
+                isScrollControlled: true,
                 context: context,
                 builder: (BuildContext context) {
                   return StatefulBuilder(
@@ -201,14 +200,44 @@ class _CashFlowState extends State<CashFlow> {
                       return SafeArea(
                         bottom: true,
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16),
-                          height: MediaQuery.of(context).size.height / 2,
+                          padding: EdgeInsets.only(
+                            left: 16,
+                            right: 16,
+                          ),
+                          height: MediaQuery.of(context).size.height * 0.8,
                           child: Center(
                             child: Column(
                               children: <Widget>[
-                                IconButton(
-                                  icon: Icon(Icons.drag_handle_rounded),
-                                  onPressed: () => Navigator.pop(context),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 12.0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.close_rounded,
+                                        ),
+                                        onPressed: () => Navigator.pop(context),
+                                      ),
+                                      IconButton(
+                                        icon: Icon(
+                                          Icons.add,
+                                          color: Colors.cyan,
+                                        ),
+                                        onPressed: () {
+                                          Navigator.pop(context);
+                                          Navigator.of(context).push(
+                                            MaterialPageRoute(
+                                              builder: (BuildContext context) {
+                                                return AccountForm();
+                                              },
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ],
+                                  ),
                                 ),
 
                                 /* Account search input */
@@ -227,14 +256,16 @@ class _CashFlowState extends State<CashFlow> {
                                         return;
                                       }
 
-                                      setModalState(() {
-                                        _filteredAccounts = accountModel
-                                            .getAccounts()
-                                            .where((account) => account.name
-                                                .toLowerCase()
-                                                .contains(value))
-                                            .toList();
-                                      });
+                                      setModalState(
+                                        () {
+                                          _filteredAccounts = accountModel
+                                              .getAccounts()
+                                              .where((account) => account.name
+                                                  .toLowerCase()
+                                                  .contains(value))
+                                              .toList();
+                                        },
+                                      );
                                     },
                                   ),
                                 ),
@@ -287,35 +318,6 @@ class _CashFlowState extends State<CashFlow> {
                                             ),
                                             shape: BoxShape.circle,
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                                ),
-
-                                /* Add new account button */
-                                Container(
-                                  width: MediaQuery.of(context).size.width,
-                                  padding: EdgeInsets.all(16),
-                                  child: CupertinoButton(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Icon(Icons.add),
-                                        const Text(
-                                          'Add New Account',
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                      ],
-                                    ),
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                      Navigator.of(context).push(
-                                        MaterialPageRoute(
-                                          builder: (BuildContext context) {
-                                            return AccountForm();
-                                          },
                                         ),
                                       );
                                     },

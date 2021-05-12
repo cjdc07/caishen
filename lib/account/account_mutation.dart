@@ -38,7 +38,7 @@ class AccountMutation extends StatelessWidget {
     }
 
     return IconButton(
-      icon: Icon(Icons.check, color: Colors.cyan),
+      icon: Icon(Icons.check, color: Colors.green),
       onPressed: () async {
         if (!formKey.currentState.validate()) {
           return;

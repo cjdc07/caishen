@@ -9,9 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// TODO: in Firestore prod
-// 1. Add name to account.color
-
 class AccountForm extends StatefulWidget {
   final Account account;
 
@@ -151,7 +148,7 @@ class _AccountFormState extends State<AccountForm> {
                       ),
                       Wrap(
                         runSpacing: 10.0,
-                        spacing: 10.0,
+                        spacing: 18.0,
                         children: colors
                             .map(
                               (color) => Container(
@@ -194,14 +191,10 @@ class _AccountFormState extends State<AccountForm> {
                         padding: EdgeInsets.only(top: 32.0),
                         child: Container(
                           width: MediaQuery.of(context).size.width,
-                          child: FlatButton(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
-                            color: Colors.red,
+                          child: TextButton(
                             child: Text(
                               'Delete ${widget.account.name}',
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(fontSize: 16, color: Colors.red),
                             ),
                             onPressed: () {
                               return showDialog<void>(
