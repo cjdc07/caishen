@@ -28,3 +28,25 @@ List<FullScreenSelectItem> accountTypeItems = [
   new FullScreenSelectItem(value: 'stockBroker', label: 'Stock Broker'),
   new FullScreenSelectItem(value: 'mutualFund', label: 'Mutual Fund'),
 ];
+
+final List<Map<String, String>> months = [
+  {"label": "All", "value": "all"},
+  {"label": "Jan", "value": DateTime.january.toString()},
+  {"label": "Feb", "value": DateTime.february.toString()},
+  {"label": "Mar", "value": DateTime.march.toString()},
+  {"label": "Apr", "value": DateTime.april.toString()},
+  {"label": "May", "value": DateTime.may.toString()},
+  {"label": "Jun", "value": DateTime.june.toString()},
+  {"label": "Jul", "value": DateTime.july.toString()},
+  {"label": "Aug", "value": DateTime.august.toString()},
+  {"label": "Sep", "value": DateTime.september.toString()},
+  {"label": "Oct", "value": DateTime.october.toString()},
+  {"label": "Nov", "value": DateTime.november.toString()},
+  {"label": "Dec", "value": DateTime.december.toString()},
+];
+
+final List<Map<String, String>> years = [
+  {"label": "All", "value": "all"},
+  {"label": "2020", "value": "2020"},
+  {"label": "2021", "value": "2021"},
+];

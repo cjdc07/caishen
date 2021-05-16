@@ -203,135 +203,129 @@ class _CashFlowState extends State<CashFlow> {
                             },
                           );
 
-                      return SafeArea(
-                        bottom: true,
-                        child: Container(
-                          padding: EdgeInsets.only(
-                            left: 16,
-                            right: 16,
-                            bottom: 16,
-                          ),
-                          height: MediaQuery.of(context).size.height * 0.7,
-                          child: Center(
-                            child: Column(
-                              children: <Widget>[
-                                Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 12.0),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.close_rounded,
-                                        ),
-                                        onPressed: () => Navigator.pop(context),
+                      return Container(
+                        padding: EdgeInsets.only(
+                          left: 16,
+                          right: 16,
+                          bottom: 16,
+                        ),
+                        height: MediaQuery.of(context).size.height * 0.8,
+                        child: Center(
+                          child: Column(
+                            children: <Widget>[
+                              Padding(
+                                padding: EdgeInsets.symmetric(vertical: 12.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.close_rounded,
                                       ),
-                                      IconButton(
-                                        icon: Icon(
-                                          Icons.add,
-                                          color: Colors.cyan,
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                          Navigator.of(context).push(
-                                            MaterialPageRoute(
-                                              builder: (BuildContext context) {
-                                                return AccountForm();
-                                              },
-                                            ),
-                                          );
-                                        },
+                                      onPressed: () => Navigator.pop(context),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.add,
+                                        color: Colors.cyan,
                                       ),
-                                    ],
-                                  ),
-                                ),
-
-                                /* Account search input */
-                                Container(
-                                  padding: EdgeInsets.only(
-                                      left: 8, right: 8, bottom: 16),
-                                  child: CupertinoSearchTextField(
-                                    placeholder: 'Search account name',
-                                    style: TextStyle(color: Colors.white),
-                                    onChanged: (value) {
-                                      if (value == '') {
-                                        setModalState(() {
-                                          _filteredAccounts =
-                                              accountModel.getAccounts();
-                                        });
-                                        return;
-                                      }
-
-                                      setModalState(
-                                        () {
-                                          _filteredAccounts = accountModel
-                                              .getAccounts()
-                                              .where((account) => account.name
-                                                  .toLowerCase()
-                                                  .contains(value))
-                                              .toList();
-                                        },
-                                      );
-                                    },
-                                  ),
-                                ),
-
-                                /* Account list */
-                                Expanded(
-                                  child: ListView.builder(
-                                    shrinkWrap: true,
-                                    itemCount: _filteredAccounts.length,
-                                    itemBuilder:
-                                        (BuildContext context, int index) {
-                                      Account account =
-                                          _filteredAccounts[index];
-
-                                      return ListTile(
-                                        onTap: () {
-                                          if (account.id !=
-                                              selectedAccount.id) {
-                                            accountModel.setSelectedAccount(
-                                              account,
-                                              notify: true,
-                                            );
-                                          }
-
-                                          Navigator.pop(context);
-                                        },
-                                        title: Text(
-                                          account.name,
-                                        ),
-                                        trailing: Text(
-                                          formatToCurrency(account.balance),
-                                          style: TextStyle(fontSize: 16),
-                                        ),
-                                        leading: Container(
-                                          child:
-                                              selectedAccount.id == account.id
-                                                  ? Icon(
-                                                      Icons.check,
-                                                      size: 16,
-                                                    )
-                                                  : null,
-                                          width: 28,
-                                          height: 28,
-                                          decoration: BoxDecoration(
-                                            color: Color.fromARGB(
-                                              account.color.alpha,
-                                              account.color.red,
-                                              account.color.green,
-                                              account.color.blue,
-                                            ),
-                                            shape: BoxShape.circle,
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                        Navigator.of(context).push(
+                                          MaterialPageRoute(
+                                            builder: (BuildContext context) {
+                                              return AccountForm();
+                                            },
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  ),
+                                        );
+                                      },
+                                    ),
+                                  ],
                                 ),
-                              ],
-                            ),
+                              ),
+
+                              /* Account search input */
+                              Container(
+                                padding: EdgeInsets.only(
+                                    left: 8, right: 8, bottom: 16),
+                                child: CupertinoSearchTextField(
+                                  placeholder: 'Search account name',
+                                  style: TextStyle(color: Colors.white),
+                                  onChanged: (value) {
+                                    if (value == '') {
+                                      setModalState(() {
+                                        _filteredAccounts =
+                                            accountModel.getAccounts();
+                                      });
+                                      return;
+                                    }
+
+                                    setModalState(
+                                      () {
+                                        _filteredAccounts = accountModel
+                                            .getAccounts()
+                                            .where((account) => account.name
+                                                .toLowerCase()
+                                                .contains(value))
+                                            .toList();
+                                      },
+                                    );
+                                  },
+                                ),
+                              ),
+
+                              /* Account list */
+                              Expanded(
+                                child: ListView.builder(
+                                  shrinkWrap: true,
+                                  itemCount: _filteredAccounts.length,
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
+                                    Account account = _filteredAccounts[index];
+
+                                    return ListTile(
+                                      onTap: () {
+                                        if (account.id != selectedAccount.id) {
+                                          accountModel.setSelectedAccount(
+                                            account,
+                                            notify: true,
+                                          );
+                                        }
+
+                                        Navigator.pop(context);
+                                      },
+                                      title: Text(
+                                        account.name,
+                                      ),
+                                      trailing: Text(
+                                        formatToCurrency(account.balance),
+                                        style: TextStyle(fontSize: 16),
+                                      ),
+                                      leading: Container(
+                                        child: selectedAccount.id == account.id
+                                            ? Icon(
+                                                Icons.check,
+                                                size: 16,
+                                              )
+                                            : null,
+                                        width: 28,
+                                        height: 28,
+                                        decoration: BoxDecoration(
+                                          color: Color.fromARGB(
+                                            account.color.alpha,
+                                            account.color.red,
+                                            account.color.green,
+                                            account.color.blue,
+                                          ),
+                                          shape: BoxShape.circle,
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       );

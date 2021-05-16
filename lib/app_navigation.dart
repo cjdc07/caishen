@@ -25,7 +25,17 @@ class _AppNavigationState extends State<AppNavigation> {
 
   static final List<Widget> _screens = <Widget>[
     Statistics(),
+    Column(
+      children: [Text('Investments')],
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+    ),
     CashFlow(),
+    Column(
+      children: [Text('Goals')],
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+    ),
     Column(
       children: [Text('Profile Management')],
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -55,24 +65,37 @@ class _AppNavigationState extends State<AppNavigation> {
         children: _screens,
         index: _selectedIndex,
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_rounded),
-            label: 'Statistics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.library_books),
-            label: 'Cash Flow',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_box),
-            label: 'Profile',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.cyan,
-        onTap: _onItemTapped,
+      bottomNavigationBar: Theme(
+        data: Theme.of(context).copyWith(
+          canvasColor: Colors.black,
+        ),
+        child: BottomNavigationBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(Icons.bar_chart_rounded),
+              label: 'Statistics',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.trending_up_rounded),
+              label: 'Investments',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.receipt_long_rounded),
+              label: 'Cash Flow',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.flag_rounded),
+              label: 'Goals',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.account_box),
+              label: 'Profile',
+            ),
+          ],
+          currentIndex: _selectedIndex,
+          selectedItemColor: Colors.cyan,
+          onTap: _onItemTapped,
+        ),
       ),
     );
   }

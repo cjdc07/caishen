@@ -1,7 +1,9 @@
+import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/firebase_util.dart';
+import 'package:cjdc_money_manager/statistics/total_balance_card.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -18,28 +20,6 @@ class _StatisticsState extends State<Statistics> {
 
   String incomeExpenseMonthFilter = "all";
   String incomeExpenseYearFilter = "all";
-
-  final List<Map<String, String>> months = [
-    {"label": "All", "value": "all"},
-    {"label": "Jan", "value": DateTime.january.toString()},
-    {"label": "Feb", "value": DateTime.february.toString()},
-    {"label": "Mar", "value": DateTime.march.toString()},
-    {"label": "Apr", "value": DateTime.april.toString()},
-    {"label": "May", "value": DateTime.may.toString()},
-    {"label": "Jun", "value": DateTime.june.toString()},
-    {"label": "Jul", "value": DateTime.july.toString()},
-    {"label": "Aug", "value": DateTime.august.toString()},
-    {"label": "Sep", "value": DateTime.september.toString()},
-    {"label": "Oct", "value": DateTime.october.toString()},
-    {"label": "Nov", "value": DateTime.november.toString()},
-    {"label": "Dec", "value": DateTime.december.toString()},
-  ];
-
-  final List<Map<String, String>> years = [
-    {"label": "All", "value": "all"},
-    {"label": "2020", "value": "2020"},
-    {"label": "2021", "value": "2021"},
-  ];
 
   @override
   void initState() {
@@ -60,16 +40,9 @@ class _StatisticsState extends State<Statistics> {
         AppTransaction.parseList(payload);
 
     Map<String, dynamic> appTransactionsStats = {
-      "BALANCE": {"total": 0, "title": "Total Balance"},
       "INCOME": {"total": 0, "title": "Total Income", "categoryStats": {}},
       "EXPENSE": {"total": 0, "title": "Total Expense", "categoryStats": {}},
     };
-
-    appTransactionsStats['BALANCE']['total'] =
-        Provider.of<AccountNotifier>(context, listen: false).getAccounts().fold(
-            0,
-            (previousValue, account) =>
-                previousValue.toDouble() + account.balance);
 
     Iterable<AppTransaction> filteredAppTransactions =
         appTransactions.where((appTransaction) {
@@ -132,21 +105,36 @@ class _StatisticsState extends State<Statistics> {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Text("Statistics Page"),
+    print('statistics: you should only see me once');
+    return ListView(
+      children: [
+        Consumer<AccountNotifier>(
+          builder: (context, accountModel, child) {
+            List<Account> accounts = accountModel.getAccounts();
+
+            double total = accounts.fold(
+              0,
+              (previous, account) => previous.toDouble() + account.balance,
+            );
+
+            return TotalBalanceCard(
+              total: total,
+            );
+          },
+        ),
+      ],
     );
+
     // return FutureBuilder(
     //   future: _statistics,
     //   builder: (BuildContext context, AsyncSnapshot snapshot) {
     //     if (!snapshot.hasData) {
-    //       // TODO: Change to shimmer loading
     //       return Center(
     //         child: CircularProgressIndicator(),
     //       );
     //     } else {
-    //       final totalBalanceStat = snapshot.data['BALANCE'];
-    //       final incomeStat = snapshot.data[AppTransactionType.Income];
-    //       final expenseStat = snapshot.data[AppTransactionType.Expense];
+    //       final incomeStat = snapshot.data[INCOME];
+    //       final expenseStat = snapshot.data[EXPENSE];
 
     //       List sortedIncomeCategoryStat =
     //           List.from(incomeStat['categoryStats'].entries.toList());
@@ -156,44 +144,6 @@ class _StatisticsState extends State<Statistics> {
 
     //       sortedIncomeCategoryStat.sort((a, b) => b.value.compareTo(a.value));
     //       sortedExpenseCategoryStat.sort((a, b) => b.value.compareTo(a.value));
-
-    //       Widget totalBalanceStatCard = Card(
-    //         margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-    //         child: Container(
-    //           padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 24.0),
-    //           width: MediaQuery.of(context).size.width,
-    //           height: MediaQuery.of(context).size.height / 9,
-    //           child: Column(
-    //             crossAxisAlignment: CrossAxisAlignment.stretch,
-    //             children: [
-    //               Row(
-    //                 children: [
-    //                   Text(
-    //                     totalBalanceStat['title'],
-    //                     style: TextStyle(fontSize: 16),
-    //                   ),
-    //                 ],
-    //               ),
-    //               Row(
-    //                 mainAxisAlignment: MainAxisAlignment.end,
-    //                 children: [
-    //                   Text(
-    //                     formatToCurrency(totalBalanceStat['total']),
-    //                     style: TextStyle(
-    //                       fontSize: 24,
-    //                       color: totalBalanceStat['total'] < 0
-    //                           ? Colors.red
-    //                           : Colors.green,
-    //                       fontWeight: FontWeight.bold,
-    //                     ),
-    //                     textAlign: TextAlign.end,
-    //                   ),
-    //                 ],
-    //               )
-    //             ],
-    //           ),
-    //         ),
-    //       );
 
     //       Widget incomeExpenseStatCard = Card(
     //         margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
@@ -211,7 +161,7 @@ class _StatisticsState extends State<Statistics> {
     //                     Spacer(),
     //                     DropdownButton(
     //                       value: incomeExpenseMonthFilter,
-    //                       items: months
+    //                       items: MONTHS
     //                           .map(
     //                             (month) => DropdownMenuItem(
     //                               value: month['value'],
@@ -376,7 +326,7 @@ class _StatisticsState extends State<Statistics> {
     //       );
 
     //       return ListView(
-    //         children: [totalBalanceStatCard, incomeExpenseStatCard],
+    //         children: [incomeExpenseStatCard],
     //       );
     //     }
     //   },

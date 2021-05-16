@@ -22,9 +22,6 @@ class App extends StatelessWidget {
       child: MaterialApp(
         title: AppConfig.of(context).appTitle,
         theme: ThemeData(
-          bottomNavigationBarTheme: BottomNavigationBarThemeData(
-            backgroundColor: Colors.black,
-          ),
           bottomSheetTheme: BottomSheetThemeData(
             backgroundColor: Colors.grey[900],
           ),
