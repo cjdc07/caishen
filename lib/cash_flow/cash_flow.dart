@@ -102,6 +102,9 @@ class _CashFlowState extends State<CashFlow> {
                   color: Colors.cyan,
                 ),
                 onPressed: () => showModalBottomSheet<void>(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16.0),
+                  ),
                   context: context,
                   builder: (BuildContext context) {
                     return SafeArea(
@@ -186,6 +189,9 @@ class _CashFlowState extends State<CashFlow> {
               ),
               onTap: () => showModalBottomSheet<void>(
                 /* Custom Account Picker Bottom Modal */
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16.0),
+                ),
                 isScrollControlled: true,
                 context: context,
                 builder: (BuildContext context) {
@@ -203,8 +209,9 @@ class _CashFlowState extends State<CashFlow> {
                           padding: EdgeInsets.only(
                             left: 16,
                             right: 16,
+                            bottom: 16,
                           ),
-                          height: MediaQuery.of(context).size.height * 0.8,
+                          height: MediaQuery.of(context).size.height * 0.7,
                           child: Center(
                             child: Column(
                               children: <Widget>[
