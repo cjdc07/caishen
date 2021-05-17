@@ -334,7 +334,6 @@ class _CashFlowState extends State<CashFlow> {
                 },
               ).whenComplete(() => onModalBottomSheetClose()),
             ),
-            elevation: 0.0,
           ),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,

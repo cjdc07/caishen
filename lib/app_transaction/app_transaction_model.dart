@@ -138,6 +138,6 @@ class AppTransactionCategory {
 
   @override
   String toString() {
-    return '{ key: $key, type: $type, value: $value }';
+    return '{ id: $id, key: $key, type: $type, value: $value }';
   }
 }

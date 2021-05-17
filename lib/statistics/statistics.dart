@@ -1,14 +1,13 @@
 import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
-import 'package:cjdc_money_manager/firebase_util.dart';
+import 'package:cjdc_money_manager/statistics/income_expense_statistics_card.dart';
 import 'package:cjdc_money_manager/statistics/total_balance_card.dart';
-import 'package:cjdc_money_manager/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:charts_flutter/flutter.dart' as charts;
 
 class Statistics extends StatefulWidget {
   @override
@@ -16,30 +15,19 @@ class Statistics extends StatefulWidget {
 }
 
 class _StatisticsState extends State<Statistics> {
-  Future<Map<String, dynamic>> _statistics;
-
-  String incomeExpenseMonthFilter = "all";
-  String incomeExpenseYearFilter = "all";
+  int month = DateTime.may;
+  int year = 2021;
 
   @override
   void initState() {
     super.initState();
-    // _statistics = _getStatistics();
   }
 
-  Future<Map<String, dynamic>> _getStatistics() async {
-    QuerySnapshot snapshot = await FirebaseUtil.getAppTransactionsSnapshot();
-
-    List<dynamic> payload = snapshot.docs.map((transaction) {
-      Map<String, dynamic> data = transaction.data();
-      data['id'] = transaction.id;
-      return data;
-    }).toList();
-
-    final List<AppTransaction> appTransactions =
-        AppTransaction.parseList(payload);
-
-    Map<String, dynamic> appTransactionsStats = {
+  Map<String, dynamic> _computeAppTransactions(
+    List<AppTransaction> appTransactions,
+    List<AppTransactionCategory> appTransactionCategories,
+  ) {
+    Map<String, dynamic> results = {
       "INCOME": {"total": 0, "title": "Total Income", "categoryStats": {}},
       "EXPENSE": {"total": 0, "title": "Total Expense", "categoryStats": {}},
     };
@@ -50,328 +38,123 @@ class _StatisticsState extends State<Statistics> {
         return false;
       }
 
-      if (incomeExpenseMonthFilter == "all" &&
-          incomeExpenseYearFilter == "all") {
-        return true;
-      }
+      // if (incomeExpenseMonthFilter == "all" &&
+      //     incomeExpenseYearFilter == "all") {
+      //   return true;
+      // }
 
-      if (incomeExpenseMonthFilter ==
-              appTransaction.createdAt.month.toString() &&
-          incomeExpenseYearFilter == "all") {
-        return true;
-      }
+      // if (incomeExpenseMonthFilter ==
+      //         appTransaction.createdAt.month.toString() &&
+      //     incomeExpenseYearFilter == "all") {
+      //   return true;
+      // }
 
-      if (incomeExpenseMonthFilter == "all" &&
-          incomeExpenseYearFilter == appTransaction.createdAt.year.toString()) {
-        return true;
-      }
+      // if (incomeExpenseMonthFilter == "all" &&
+      //     incomeExpenseYearFilter == appTransaction.createdAt.year.toString()) {
+      //   return true;
+      // }
 
-      if (incomeExpenseMonthFilter ==
-              appTransaction.createdAt.month.toString() &&
-          incomeExpenseYearFilter == appTransaction.createdAt.year.toString()) {
+      if (month == appTransaction.createdAt.month &&
+          year == appTransaction.createdAt.year) {
         return true;
       }
 
       return false;
     });
 
-    List<QueryDocumentSnapshot> appTransactionCategoriesDocs =
-        (await FirebaseUtil.getAppTransactionCategoriesSnapshot()).docs;
-
-    Map<String, Map<String, dynamic>> appTransactionCategoriesDocsMap =
-        Map.fromIterable(appTransactionCategoriesDocs,
-            key: (doc) => doc.id, value: (doc) => doc.data());
+    Map<String, dynamic> appTransactionCategoriesMap = Map.fromIterable(
+      appTransactionCategories,
+      key: (doc) => doc.id,
+      value: (doc) => doc,
+    );
 
     for (AppTransaction appTransaction in filteredAppTransactions) {
-      appTransactionsStats[appTransaction.type]['total'] +=
-          appTransaction.amount;
+      results[appTransaction.type]['total'] += appTransaction.amount;
 
       String categoryName =
-          appTransactionCategoriesDocsMap[appTransaction.category.id]['name'];
+          appTransactionCategoriesMap[appTransaction.category.id.toString()]
+              .value;
 
-      if (appTransactionsStats[appTransaction.type]['categoryStats']
-              [categoryName] ==
-          null) {
-        appTransactionsStats[appTransaction.type]['categoryStats']
-            [categoryName] = 0;
+      if (results[appTransaction.type]['categoryStats'][categoryName] == null) {
+        results[appTransaction.type]['categoryStats'][categoryName] = 0;
       }
 
-      appTransactionsStats[appTransaction.type]['categoryStats']
-          [categoryName] += appTransaction.amount;
+      results[appTransaction.type]['categoryStats'][categoryName] +=
+          appTransaction.amount;
     }
 
-    return appTransactionsStats;
+    return results;
   }
 
   @override
   Widget build(BuildContext context) {
     print('statistics: you should only see me once');
-    return ListView(
-      children: [
-        Consumer<AccountNotifier>(
-          builder: (context, accountModel, child) {
-            List<Account> accounts = accountModel.getAccounts();
+    return Scaffold(
+      appBar: AppBar(
+        centerTitle: false,
+        title: Text('Statistics'),
+      ),
+      body: ListView(
+        children: [
+          Consumer<AccountNotifier>(
+            builder: (context, accountModel, child) {
+              List<Account> accounts = accountModel.getAccounts();
 
-            double total = accounts.fold(
-              0,
-              (previous, account) => previous.toDouble() + account.balance,
-            );
+              double total = accounts.fold(
+                0,
+                (previous, account) => previous.toDouble() + account.balance,
+              );
 
-            return TotalBalanceCard(
-              total: total,
-            );
-          },
-        ),
-      ],
-    );
+              return TotalBalanceCard(
+                total: total,
+              );
+            },
+          ),
+          FutureBuilder<QuerySnapshot>(
+            future: FirebaseFirestore.instance
+                .collection('appTransactions')
+                .where(
+                  "createdAt",
+                  isGreaterThanOrEqualTo:
+                      new DateTime(year, month), // Start of month
+                )
+                .where(
+                  "createdAt",
+                  isLessThanOrEqualTo:
+                      new DateTime(year, month + 1, 0), // End of month
+                )
+                .get(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Center(child: Text('Failed to retrieve transactions'));
+              }
 
-    // return FutureBuilder(
-    //   future: _statistics,
-    //   builder: (BuildContext context, AsyncSnapshot snapshot) {
-    //     if (!snapshot.hasData) {
-    //       return Center(
-    //         child: CircularProgressIndicator(),
-    //       );
-    //     } else {
-    //       final incomeStat = snapshot.data[INCOME];
-    //       final expenseStat = snapshot.data[EXPENSE];
+              if (snapshot.connectionState == ConnectionState.done) {
+                List<AppTransaction> appTransactions =
+                    snapshot.data.docs.map((transaction) {
+                  Map<String, dynamic> data = transaction.data();
+                  data['id'] = transaction.id;
+                  return AppTransaction.parse(data);
+                }).toList();
 
-    //       List sortedIncomeCategoryStat =
-    //           List.from(incomeStat['categoryStats'].entries.toList());
+                List<AppTransactionCategory> categories =
+                    Provider.of<AppTransactionNotifier>(context)
+                        .getAppTransactionCategories();
 
-    //       List sortedExpenseCategoryStat =
-    //           List.from(expenseStat['categoryStats'].entries.toList());
+                Map<String, dynamic> results =
+                    _computeAppTransactions(appTransactions, categories);
 
-    //       sortedIncomeCategoryStat.sort((a, b) => b.value.compareTo(a.value));
-    //       sortedExpenseCategoryStat.sort((a, b) => b.value.compareTo(a.value));
+                return IncomeExpenseStatisticsCard(
+                  incomeStatistics: results[INCOME],
+                  expenseStatistics: results[EXPENSE],
+                );
+              }
 
-    //       Widget incomeExpenseStatCard = Card(
-    //         margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-    //         child: ExpansionTile(
-    //           title: Container(
-    //             padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
-    //             child: Column(
-    //               children: [
-    //                 Row(
-    //                   children: [
-    //                     Text(
-    //                       "Income | Expense",
-    //                       style: TextStyle(fontSize: 16),
-    //                     ),
-    //                     Spacer(),
-    //                     DropdownButton(
-    //                       value: incomeExpenseMonthFilter,
-    //                       items: MONTHS
-    //                           .map(
-    //                             (month) => DropdownMenuItem(
-    //                               value: month['value'],
-    //                               child: Text(month['label']),
-    //                             ),
-    //                           )
-    //                           .toList(),
-    //                       onChanged: (value) {
-    //                         setState(() {
-    //                           incomeExpenseMonthFilter = value;
-    //                           // TODO: Show loading screen on numbers
-    //                           _statistics = _getStatistics();
-    //                         });
-    //                       },
-    //                     ),
-    //                     Spacer(),
-    //                     DropdownButton(
-    //                       value: incomeExpenseYearFilter,
-    //                       items: years
-    //                           .map(
-    //                             (year) => DropdownMenuItem(
-    //                               value: year['value'],
-    //                               child: Text(year['label']),
-    //                             ),
-    //                           )
-    //                           .toList(),
-    //                       onChanged: (value) {
-    //                         setState(() {
-    //                           incomeExpenseYearFilter = value;
-    //                           // TODO: Show loading screen on numbers
-    //                           _statistics = _getStatistics();
-    //                         });
-    //                       },
-    //                     ),
-    //                   ],
-    //                 ),
-    //                 Row(
-    //                   children: [
-    //                     Column(
-    //                       children: [
-    //                         IncomeExpenseRatioPieChart(
-    //                           [
-    //                             new IncomeExpenseRatio(
-    //                                 0,
-    //                                 incomeStat['total'] is int
-    //                                     ? (incomeStat['total'] as int)
-    //                                         .toDouble()
-    //                                     : incomeStat['total'],
-    //                                 charts.MaterialPalette.green.shadeDefault),
-    //                             new IncomeExpenseRatio(
-    //                                 1,
-    //                                 expenseStat['total'] is int
-    //                                     ? (expenseStat['total'] as int)
-    //                                         .toDouble()
-    //                                     : expenseStat['total'],
-    //                                 charts.MaterialPalette.red.shadeDefault),
-    //                           ],
-    //                           120,
-    //                           120,
-    //                           animate: true,
-    //                         ),
-    //                       ],
-    //                     ),
-    //                     Spacer(),
-    //                     Column(
-    //                       crossAxisAlignment: CrossAxisAlignment.end,
-    //                       children: [
-    //                         Text(
-    //                           formatToCurrency(incomeStat['total']),
-    //                           style: TextStyle(
-    //                             fontSize: 24,
-    //                             color: Colors.green,
-    //                             fontWeight: FontWeight.bold,
-    //                           ),
-    //                           textAlign: TextAlign.end,
-    //                         ),
-    //                         Text(
-    //                           formatToCurrency(expenseStat['total']),
-    //                           style: TextStyle(
-    //                             fontSize: 24,
-    //                             color: Colors.red,
-    //                             fontWeight: FontWeight.bold,
-    //                           ),
-    //                           textAlign: TextAlign.end,
-    //                         ),
-    //                       ],
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ],
-    //             ),
-    //           ),
-    //           children: [
-    //             ExpansionTile(
-    //               tilePadding: EdgeInsets.symmetric(horizontal: 24.0),
-    //               childrenPadding: EdgeInsets.symmetric(horizontal: 12.0),
-    //               title: Text(
-    //                 'Income',
-    //                 style: TextStyle(color: Colors.green),
-    //               ),
-    //               children: sortedIncomeCategoryStat
-    //                   .map<Widget>(
-    //                     (categoryStat) => Padding(
-    //                       padding: const EdgeInsets.symmetric(
-    //                         horizontal: 24.0,
-    //                         vertical: 16.0,
-    //                       ),
-    //                       child: SizedBox(
-    //                         child: Row(
-    //                           children: <Widget>[
-    //                             Text(categoryStat.key),
-    //                             Spacer(),
-    //                             Text(
-    //                               formatToCurrency(categoryStat.value),
-    //                               style: TextStyle(
-    //                                 color: Colors.green,
-    //                                 fontSize: 16.0,
-    //                               ),
-    //                             ),
-    //                           ],
-    //                         ),
-    //                       ),
-    //                     ),
-    //                   )
-    //                   .toList(),
-    //             ),
-    //             ExpansionTile(
-    //               tilePadding: EdgeInsets.symmetric(horizontal: 24.0),
-    //               childrenPadding: EdgeInsets.symmetric(horizontal: 12.0),
-    //               title: Text(
-    //                 'Expense',
-    //                 style: TextStyle(color: Colors.red),
-    //               ),
-    //               children: sortedExpenseCategoryStat
-    //                   .map<Widget>(
-    //                     (categoryStat) => Padding(
-    //                       padding: const EdgeInsets.symmetric(
-    //                         horizontal: 24.0,
-    //                         vertical: 16.0,
-    //                       ),
-    //                       child: SizedBox(
-    //                         child: Row(
-    //                           children: <Widget>[
-    //                             Text(categoryStat.key),
-    //                             Spacer(),
-    //                             Text(
-    //                               formatToCurrency(categoryStat.value),
-    //                               style: TextStyle(
-    //                                 color: Colors.red,
-    //                                 fontSize: 16.0,
-    //                               ),
-    //                             ),
-    //                           ],
-    //                         ),
-    //                       ),
-    //                     ),
-    //                   )
-    //                   .toList(),
-    //             ),
-    //           ],
-    //         ),
-    //       );
-
-    //       return ListView(
-    //         children: [incomeExpenseStatCard],
-    //       );
-    //     }
-    //   },
-    // );
-  }
-}
-
-class IncomeExpenseRatioPieChart extends StatelessWidget {
-  final double width;
-  final double height;
-  final List<IncomeExpenseRatio> data;
-  final bool animate;
-
-  IncomeExpenseRatioPieChart(this.data, this.width, this.height,
-      {this.animate});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: charts.PieChart(
-        [
-          new charts.Series<IncomeExpenseRatio, int>(
-            id: 'IncomeExpenseRatio',
-            domainFn: (IncomeExpenseRatio incomeExpenseRatio, _) =>
-                incomeExpenseRatio.type,
-            measureFn: (IncomeExpenseRatio incomeExpenseRatio, _) =>
-                incomeExpenseRatio.total != 0 ? incomeExpenseRatio.total : 1,
-            colorFn: (IncomeExpenseRatio incomeExpenseRatio, _) =>
-                incomeExpenseRatio.color,
-            data: data,
-          )
+              return Center(child: CircularProgressIndicator());
+            },
+          ),
         ],
-        animate: animate,
       ),
     );
   }
-}
-
-class IncomeExpenseRatio {
-  static final List<String> labels = ['I', 'E'];
-  final int type;
-  final double total;
-  final charts.Color color;
-
-  IncomeExpenseRatio(this.type, this.total, this.color);
 }
