@@ -9,6 +9,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+// TODO:
+// 1. Does not refresh automatically when there are changes in transaction
+// 2. Does not cache data from firestore (calls everytime)
+// 3. Show transaction on categories when clicked
+// 4. Filter by year and date
+
 class Statistics extends StatefulWidget {
   @override
   _StatisticsState createState() => _StatisticsState();
@@ -114,12 +120,12 @@ class _StatisticsState extends State<Statistics> {
             future: FirebaseFirestore.instance
                 .collection('appTransactions')
                 .where(
-                  "createdAt",
+                  'createdAt',
                   isGreaterThanOrEqualTo:
                       new DateTime(year, month), // Start of month
                 )
                 .where(
-                  "createdAt",
+                  'createdAt',
                   isLessThanOrEqualTo:
                       new DateTime(year, month + 1, 0), // End of month
                 )
@@ -137,6 +143,7 @@ class _StatisticsState extends State<Statistics> {
                   return AppTransaction.parse(data);
                 }).toList();
 
+                // TODO: maybe use this as Consumer?
                 List<AppTransactionCategory> categories =
                     Provider.of<AppTransactionNotifier>(context)
                         .getAppTransactionCategories();
@@ -147,6 +154,14 @@ class _StatisticsState extends State<Statistics> {
                 return IncomeExpenseStatisticsCard(
                   incomeStatistics: results[INCOME],
                   expenseStatistics: results[EXPENSE],
+                  month: month,
+                  year: year,
+                  onMonthChange: (value) => setState(() {
+                    month = value;
+                  }),
+                  onYearChange: (value) => setState(() {
+                    year = value;
+                  }),
                 );
               }
 

@@ -1,3 +1,4 @@
+import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -5,11 +6,19 @@ import 'package:charts_flutter/flutter.dart' as charts;
 class IncomeExpenseStatisticsCard extends StatelessWidget {
   final Map<String, dynamic> incomeStatistics;
   final Map<String, dynamic> expenseStatistics;
+  final int month;
+  final int year;
+  final Function onMonthChange;
+  final Function onYearChange;
 
   IncomeExpenseStatisticsCard({
     Key key,
     this.incomeStatistics,
     this.expenseStatistics,
+    this.month,
+    this.year,
+    this.onMonthChange,
+    this.onYearChange,
   }) : super(key: key);
 
   @override
@@ -37,43 +46,31 @@ class IncomeExpenseStatisticsCard extends StatelessWidget {
                     style: TextStyle(fontSize: 16),
                   ),
                   Spacer(),
-                  // DropdownButton(
-                  //   value: incomeExpenseMonthFilter,
-                  //   items: MONTHS
-                  //       .map(
-                  //         (month) => DropdownMenuItem(
-                  //           value: month['value'],
-                  //           child: Text(month['label']),
-                  //         ),
-                  //       )
-                  //       .toList(),
-                  //   onChanged: (value) {
-                  //     setState(() {
-                  //       incomeExpenseMonthFilter = value;
-                  //       // TODO: Show loading screen on numbers
-                  //       _statistics = _getStatistics();
-                  //     });
-                  //   },
-                  // ),
+                  DropdownButton(
+                    value: month,
+                    items: months
+                        .map(
+                          (month) => DropdownMenuItem(
+                            value: month['value'],
+                            child: Text(month['label']),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) => onMonthChange(value),
+                  ),
                   Spacer(),
-                  // DropdownButton(
-                  //   value: incomeExpenseYearFilter,
-                  //   items: years
-                  //       .map(
-                  //         (year) => DropdownMenuItem(
-                  //           value: year['value'],
-                  //           child: Text(year['label']),
-                  //         ),
-                  //       )
-                  //       .toList(),
-                  //   onChanged: (value) {
-                  //     setState(() {
-                  //       incomeExpenseYearFilter = value;
-                  //       // TODO: Show loading screen on numbers
-                  //       _statistics = _getStatistics();
-                  //     });
-                  //   },
-                  // ),
+                  DropdownButton(
+                    value: year,
+                    items: years
+                        .map(
+                          (year) => DropdownMenuItem(
+                            value: year['value'],
+                            child: Text(year['label']),
+                          ),
+                        )
+                        .toList(),
+                    onChanged: (value) => onYearChange(value),
+                  ),
                 ],
               ),
               Row(
