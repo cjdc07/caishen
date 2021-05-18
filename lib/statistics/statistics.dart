@@ -13,7 +13,8 @@ import 'package:provider/provider.dart';
 // 1. Does not refresh automatically when there are changes in transaction
 // 2. Does not cache data from firestore (calls everytime)
 // 3. Show transaction on categories when clicked
-// 4. Filter by year and date
+// 4. Add 'all' filter
+// 5. Income Expense Statistics Card loading should only be in card
 
 class Statistics extends StatefulWidget {
   @override
@@ -21,8 +22,8 @@ class Statistics extends StatefulWidget {
 }
 
 class _StatisticsState extends State<Statistics> {
-  int month = DateTime.may;
-  int year = 2021;
+  int month = DateTime.now().month;
+  int year = DateTime.now().year;
 
   @override
   void initState() {
@@ -34,8 +35,8 @@ class _StatisticsState extends State<Statistics> {
     List<AppTransactionCategory> appTransactionCategories,
   ) {
     Map<String, dynamic> results = {
-      "INCOME": {"total": 0, "title": "Total Income", "categoryStats": {}},
-      "EXPENSE": {"total": 0, "title": "Total Expense", "categoryStats": {}},
+      'INCOME': {'total': 0, 'title': 'Total Income', 'categoryStats': {}},
+      'EXPENSE': {'total': 0, 'title': 'Total Expense', 'categoryStats': {}},
     };
 
     Iterable<AppTransaction> filteredAppTransactions =
@@ -44,18 +45,18 @@ class _StatisticsState extends State<Statistics> {
         return false;
       }
 
-      // if (incomeExpenseMonthFilter == "all" &&
-      //     incomeExpenseYearFilter == "all") {
+      // if (incomeExpenseMonthFilter == 'all' &&
+      //     incomeExpenseYearFilter == 'all') {
       //   return true;
       // }
 
       // if (incomeExpenseMonthFilter ==
       //         appTransaction.createdAt.month.toString() &&
-      //     incomeExpenseYearFilter == "all") {
+      //     incomeExpenseYearFilter == 'all') {
       //   return true;
       // }
 
-      // if (incomeExpenseMonthFilter == "all" &&
+      // if (incomeExpenseMonthFilter == 'all' &&
       //     incomeExpenseYearFilter == appTransaction.createdAt.year.toString()) {
       //   return true;
       // }
