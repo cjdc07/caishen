@@ -1,4 +1,5 @@
 import 'package:cjdc_money_manager/constants.dart';
+import 'package:cjdc_money_manager/statistics/category_app_transactions.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:charts_flutter/flutter.dart' as charts;
@@ -29,8 +30,11 @@ class IncomeExpenseStatisticsCard extends StatelessWidget {
     List sortedExpenseCategoryStat =
         List.from(expenseStatistics['categoryStats'].entries.toList());
 
-    sortedIncomeCategoryStat.sort((a, b) => b.value.compareTo(a.value));
-    sortedExpenseCategoryStat.sort((a, b) => b.value.compareTo(a.value));
+    sortedIncomeCategoryStat
+        .sort((a, b) => b.value['total'].compareTo(a.value['total']));
+
+    sortedExpenseCategoryStat
+        .sort((a, b) => b.value['total'].compareTo(a.value['total']));
 
     return Card(
       margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
@@ -139,24 +143,24 @@ class IncomeExpenseStatisticsCard extends StatelessWidget {
             ),
             children: sortedIncomeCategoryStat
                 .map<Widget>(
-                  (categoryStat) => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 16.0,
+                  (categoryStat) => ListTile(
+                    title: Text(categoryStat.value['name']),
+                    trailing: Text(
+                      formatToCurrency(categoryStat.value['total']),
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 16.0,
+                      ),
                     ),
-                    child: SizedBox(
-                      child: Row(
-                        children: <Widget>[
-                          Text(categoryStat.key),
-                          Spacer(),
-                          Text(
-                            formatToCurrency(categoryStat.value),
-                            style: TextStyle(
-                              color: Colors.green,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ],
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return CategoryAppTransactions(
+                            appTransactions:
+                                categoryStat.value['appTransactions'],
+                            categoryName: categoryStat.value['name'],
+                          );
+                        },
                       ),
                     ),
                   ),
@@ -172,24 +176,24 @@ class IncomeExpenseStatisticsCard extends StatelessWidget {
             ),
             children: sortedExpenseCategoryStat
                 .map<Widget>(
-                  (categoryStat) => Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24.0,
-                      vertical: 16.0,
+                  (categoryStat) => ListTile(
+                    title: Text(categoryStat.value['name']),
+                    trailing: Text(
+                      formatToCurrency(categoryStat.value['total']),
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 16.0,
+                      ),
                     ),
-                    child: SizedBox(
-                      child: Row(
-                        children: <Widget>[
-                          Text(categoryStat.key),
-                          Spacer(),
-                          Text(
-                            formatToCurrency(categoryStat.value),
-                            style: TextStyle(
-                              color: Colors.red,
-                              fontSize: 16.0,
-                            ),
-                          ),
-                        ],
+                    onTap: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) {
+                          return CategoryAppTransactions(
+                            appTransactions:
+                                categoryStat.value['appTransactions'],
+                            categoryName: categoryStat.value['name'],
+                          );
+                        },
                       ),
                     ),
                   ),

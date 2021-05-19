@@ -83,11 +83,19 @@ class _StatisticsState extends State<Statistics> {
               .value;
 
       if (results[appTransaction.type]['categoryStats'][categoryName] == null) {
-        results[appTransaction.type]['categoryStats'][categoryName] = 0;
+        results[appTransaction.type]['categoryStats'][categoryName] = {
+          'name': categoryName,
+          'total': 0,
+          'appTransactions': <AppTransaction>[],
+        };
       }
 
-      results[appTransaction.type]['categoryStats'][categoryName] +=
+      results[appTransaction.type]['categoryStats'][categoryName]['total'] +=
           appTransaction.amount;
+
+      results[appTransaction.type]['categoryStats'][categoryName]
+              ['appTransactions']
+          .add(appTransaction);
     }
 
     return results;
