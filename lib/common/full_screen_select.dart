@@ -1,3 +1,5 @@
+import 'package:cjdc_money_manager/common/full_screen_select_content.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class FullScreenSelect extends StatelessWidget {
@@ -6,7 +8,9 @@ class FullScreenSelect extends StatelessWidget {
   final String title;
   final Function onTap;
   final List<FullScreenSelectItem> items;
+  final dynamic selectedItemValue;
   final List<Widget> actions;
+  final bool hasSearch;
 
   FullScreenSelect({
     Key key,
@@ -16,6 +20,8 @@ class FullScreenSelect extends StatelessWidget {
     @required this.onTap,
     this.items,
     this.actions,
+    this.hasSearch = false,
+    this.selectedItemValue,
   }) : super(key: key);
 
   @override
@@ -35,26 +41,13 @@ class FullScreenSelect extends StatelessWidget {
           Navigator.of(context).push(
             MaterialPageRoute(
               builder: (BuildContext context) {
-                return Scaffold(
-                  appBar: AppBar(
-                    title: Text(title),
-                    actions: actions,
-                  ),
-                  body: ListView.builder(
-                    padding: EdgeInsets.only(bottom: 24.0),
-                    shrinkWrap: true,
-                    itemCount: items != null ? items.length : 0,
-                    itemBuilder: (BuildContext context, int index) {
-                      FullScreenSelectItem item = items[index];
-
-                      return ListTile(
-                        onTap: () => onTap(item),
-                        title: Text(
-                          item.label,
-                        ),
-                      );
-                    },
-                  ),
+                return FullScreenSelectContent(
+                  actions: actions,
+                  hasSearch: hasSearch,
+                  items: items,
+                  onTap: onTap,
+                  title: title,
+                  selectedItemValue: selectedItemValue,
                 );
               },
             ),

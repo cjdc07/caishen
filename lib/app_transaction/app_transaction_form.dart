@@ -329,9 +329,14 @@ class _TransactionFormState extends State<TransactionForm> {
                                     label: e.value, value: e.key))
                                 .toList();
 
+                        appTransactionCategoryItems
+                            .sort((a, b) => a.label.compareTo(b.label));
+
                         return FullScreenSelect(
                           title: 'Select Category',
+                          hasSearch: true,
                           enabled: !isSaving,
+                          selectedItemValue: selectedAppTransactionCategory.key,
                           items: appTransactionCategoryItems,
                           fieldTitle: Text(
                             selectedAppTransactionCategory != null
