@@ -6,7 +6,7 @@ import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dar
 import 'package:cjdc_money_manager/common/app_dropdown_field.dart';
 import 'package:cjdc_money_manager/common/app_number_field.dart';
 import 'package:cjdc_money_manager/common/app_text_field.dart';
-import 'package:cjdc_money_manager/common/full_screen_select.dart';
+import 'package:cjdc_money_manager/common/full_screen_select/full_screen_select.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';

@@ -7,14 +7,16 @@ class AppTextField extends StatelessWidget with FieldValidation {
   final String label;
   final int minLines;
   final int maxLines;
+  final bool isPassword;
 
   const AppTextField({
     Key key,
     @required this.controller,
     @required this.enabled,
     @required this.label,
-    this.minLines,
-    this.maxLines,
+    this.minLines = 1,
+    this.maxLines = 1,
+    this.isPassword = false,
   }) : super(key: key);
 
   @override
@@ -35,6 +37,7 @@ class AppTextField extends StatelessWidget with FieldValidation {
       cursorColor: Colors.cyan,
       minLines: minLines,
       maxLines: maxLines,
+      obscureText: isPassword,
     );
   }
 }

@@ -3,7 +3,7 @@ import 'package:cjdc_money_manager/account/account_mutation.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/common/app_number_field.dart';
 import 'package:cjdc_money_manager/common/app_text_field.dart';
-import 'package:cjdc_money_manager/common/full_screen_select.dart';
+import 'package:cjdc_money_manager/common/full_screen_select/full_screen_select.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';

@@ -1,5 +1,5 @@
 import 'package:cjdc_money_manager/account/account_model.dart';
-import 'package:cjdc_money_manager/common/full_screen_select.dart';
+import 'package:cjdc_money_manager/common/full_screen_select/full_screen_select.dart';
 
 const String INCOME = 'INCOME';
 const String EXPENSE = 'EXPENSE';

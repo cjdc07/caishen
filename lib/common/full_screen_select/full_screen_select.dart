@@ -1,4 +1,4 @@
-import 'package:cjdc_money_manager/common/full_screen_select_content.dart';
+import 'package:cjdc_money_manager/common/full_screen_select/full_screen_select_content.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 

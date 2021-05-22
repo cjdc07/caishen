@@ -23,14 +23,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  graphql_flutter: ^3.0.0
-  carousel_slider: ^2.3.1
-  intl: ^0.16.1
+  intl: ^0.17.0
   provider: ^4.3.2+2
   shimmer: ^1.1.1
   firebase_core: "^1.1.1"
+  firebase_auth: "^1.2.0"
   cloud_firestore: "^2.1.0"
-  charts_flutter: ^0.9.0
+  charts_flutter: ^0.10.0
   flutter_datetime_picker: ^1.5.0
 
   # The following adds the Cupertino Icons font to your application.

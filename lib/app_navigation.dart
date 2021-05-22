@@ -3,6 +3,7 @@ import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/cash_flow/cash_flow.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
+import 'package:cjdc_money_manager/profile/profile.dart';
 import 'package:cjdc_money_manager/statistics/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -37,11 +38,7 @@ class _AppNavigationState extends State<AppNavigation> {
     //   crossAxisAlignment: CrossAxisAlignment.center,
     //   mainAxisAlignment: MainAxisAlignment.center,
     // ),
-    Column(
-      children: [Text('Profile Management')],
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-    ),
+    Profile(),
   ];
 
   @override
