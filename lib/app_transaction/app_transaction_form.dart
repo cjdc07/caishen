@@ -336,7 +336,7 @@ class _TransactionFormState extends State<TransactionForm> {
                           title: 'Select Category',
                           hasSearch: true,
                           enabled: !isSaving,
-                          selectedItemValue: selectedAppTransactionCategory.key,
+                          selectedItemValue: selectedAppTransactionCategory?.key,
                           items: appTransactionCategoryItems,
                           fieldTitle: Text(
                             selectedAppTransactionCategory != null
