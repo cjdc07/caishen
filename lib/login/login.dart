@@ -8,13 +8,50 @@ class Login extends StatefulWidget {
   _LoginState createState() => _LoginState();
 }
 
-class _LoginState extends State<Login> {
+class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   final formKey = GlobalKey<FormState>();
   final TextEditingController emailFieldController = TextEditingController();
   final TextEditingController passwordFieldController = TextEditingController();
   String errorMessage;
-
   bool loading = false;
+
+  AnimationController _controller;
+  Animation _animation;
+  FocusNode _focusNodeEmailField = FocusNode();
+  FocusNode _focusNodePasswordField = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    _controller =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 300));
+
+    _focusNodeEmailField.addListener(() {
+      if (_focusNodeEmailField.hasFocus) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    });
+
+    _focusNodePasswordField.addListener(() {
+      if (_focusNodePasswordField.hasFocus) {
+        _controller.forward();
+      } else {
+        _controller.reverse();
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNodeEmailField.dispose();
+    _focusNodePasswordField.dispose();
+
+    super.dispose();
+  }
 
   void setLoading() {
     setState(() {
@@ -42,6 +79,8 @@ class _LoginState extends State<Login> {
         errorMessage = 'No user found for that email.';
       } else if (e.code == 'wrong-password') {
         errorMessage = 'Wrong password provided for that user.';
+      } else {
+        errorMessage = e.message;
       }
     } finally {
       setLoading();
@@ -50,60 +89,70 @@ class _LoginState extends State<Login> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
+
+    _animation = Tween(begin: screenHeight / 3, end: screenHeight / 4)
+        .animate(_controller)
+          ..addListener(() {
+            setState(() {});
+          });
+
     return Scaffold(
       body: Container(
         margin: EdgeInsets.symmetric(horizontal: 32.0),
-        child: loading
-            ? Center(child: CircularProgressIndicator())
-            : Form(
-                key: formKey,
+        child: Form(
+          key: formKey,
+          child: Column(
+            children: [
+              SizedBox(height: _animation.value),
+              Container(
+                margin: EdgeInsets.only(bottom: 32.0),
                 child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      margin: EdgeInsets.only(bottom: 32.0),
-                      child: Column(
-                        children: [
-                          AppTextField(
-                            enabled: !loading,
-                            controller: emailFieldController,
-                            label: 'Email',
-                          ),
-                          AppTextField(
-                            isPassword: true,
-                            enabled: !loading,
-                            controller: passwordFieldController,
-                            label: 'Password',
-                          ),
-                        ],
-                      ),
+                    AppTextField(
+                      enabled: !loading,
+                      controller: emailFieldController,
+                      label: 'Email',
+                      focusNode: _focusNodeEmailField,
                     ),
-                    CupertinoButton(
-                      color: Colors.cyan,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
+                    AppTextField(
+                      isPassword: true,
+                      enabled: !loading,
+                      controller: passwordFieldController,
+                      label: 'Password',
+                      focusNode: _focusNodePasswordField,
+                    ),
+                  ],
+                ),
+              ),
+              CupertinoButton(
+                color: Colors.cyan,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: loading
+                      ? [Center(child: CircularProgressIndicator())]
+                      : [
                           const Text(
                             'Login ',
                             style: TextStyle(fontSize: 16),
                           ),
                           Icon(Icons.login_rounded),
                         ],
-                      ),
-                      onPressed: login,
-                    ),
-                    errorMessage != null
-                        ? Container(
-                            margin: EdgeInsets.only(top: 16.0),
-                            child: Text(
-                              errorMessage,
-                              style: TextStyle(fontSize: 16, color: Colors.red),
-                            ),
-                          )
-                        : Container(),
-                  ],
                 ),
+                onPressed: loading ? null : login,
               ),
+              errorMessage != null
+                  ? Container(
+                      margin: EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        errorMessage,
+                        style: TextStyle(fontSize: 16, color: Colors.red),
+                      ),
+                    )
+                  : Container(),
+            ],
+          ),
+        ),
       ),
     );
   }

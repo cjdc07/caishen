@@ -8,6 +8,7 @@ class AppTextField extends StatelessWidget with FieldValidation {
   final int minLines;
   final int maxLines;
   final bool isPassword;
+  final FocusNode focusNode;
 
   const AppTextField({
     Key key,
@@ -17,6 +18,7 @@ class AppTextField extends StatelessWidget with FieldValidation {
     this.minLines = 1,
     this.maxLines = 1,
     this.isPassword = false,
+    this.focusNode,
   }) : super(key: key);
 
   @override
@@ -38,6 +40,7 @@ class AppTextField extends StatelessWidget with FieldValidation {
       minLines: minLines,
       maxLines: maxLines,
       obscureText: isPassword,
+      focusNode: focusNode,
     );
   }
 }
