@@ -185,30 +185,18 @@ class _AppTransactionItemState extends State<AppTransactionItem> {
       child: GestureDetector(
         onTap: () {
           ScaffoldMessenger.of(context).removeCurrentSnackBar();
-          if (widget.appTransaction.type != TRANSFER) {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (BuildContext context) {
-                  return TransactionForm(
-                    appTransaction: widget.appTransaction,
-                    account: widget.account,
-                    appTransactiontype: widget.appTransaction.type,
-                  );
-                },
-              ),
-            );
-          } else {
-            final snackBar = SnackBar(
-              content: Text(
-                'We will enable editing of transfer transactions soon!',
-                style: TextStyle(color: Colors.grey[200], fontSize: 16.0),
-              ),
-              backgroundColor: Colors.grey[700],
-              padding: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-            );
 
-            ScaffoldMessenger.of(context).showSnackBar(snackBar);
-          }
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (BuildContext context) {
+                return TransactionForm(
+                  appTransaction: widget.appTransaction,
+                  account: widget.account,
+                  appTransactiontype: widget.appTransaction.type,
+                );
+              },
+            ),
+          );
         },
         child: Container(
           child: ListTile(

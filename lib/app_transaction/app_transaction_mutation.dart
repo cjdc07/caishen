@@ -129,7 +129,52 @@ class AppTransactionMutation extends StatelessWidget {
             account.deduct(appTransaction.amount);
             await accountDocumentRef.update(account.toMap());
           } else {
-            // TODO: Update Transfer App Transaction!
+            account.add(oldAppTransaction.amount);
+            account.deduct(appTransaction.amount);
+            await accountDocumentRef.update(account.toMap());
+
+            Account targetAccount = context
+                .read<AccountNotifier>()
+                .getAccounts()
+                .singleWhere((e) => e.id == appTransaction.to);
+
+            targetAccount.deduct(oldAppTransaction.amount);
+            targetAccount.add(appTransaction.amount);
+
+            await accountsRef
+                .doc(targetAccount.id)
+                .update(targetAccount.toMap());
+
+            if (updatedAppTransactions[targetAccount.id] == null) {
+              // load data from firebase to cache
+              updatedAppTransactions[targetAccount.id] = [
+                ...(await appTransactionsRef
+                        .where('account',
+                            isEqualTo: accountsRef.doc(targetAccount.id))
+                        .get())
+                    .docs,
+                ...(await appTransactionsRef
+                        .where('to', isEqualTo: targetAccount.id)
+                        .get())
+                    .docs
+              ].map((appTransaction) {
+                Map<String, dynamic> data = appTransaction.data();
+                data['id'] = appTransaction.id;
+                return AppTransaction.parse(data);
+              }).toList();
+            }
+
+            int appTransactionIndex = updatedAppTransactions[targetAccount.id]
+                .indexWhere((e) => e.id == appTransaction.id);
+
+            updatedAppTransactions[targetAccount.id][appTransactionIndex] =
+                appTransaction;
+
+            // Update target account in cache
+            int targetAccountIndex =
+                updatedAccounts.indexWhere((e) => e.id == targetAccount.id);
+
+            updatedAccounts[targetAccountIndex] = targetAccount;
           }
         } else {
           DocumentReference docRef =
@@ -154,7 +199,9 @@ class AppTransactionMutation extends StatelessWidget {
                 .read<AccountNotifier>()
                 .getAccounts()
                 .singleWhere((account) => account.id == appTransaction.to);
+
             targetAccount.add(appTransaction.amount);
+
             await accountsRef
                 .doc(appTransaction.to)
                 .update(targetAccount.toMap());
@@ -177,9 +224,9 @@ class AppTransactionMutation extends StatelessWidget {
                 data['id'] = appTransaction.id;
                 return AppTransaction.parse(data);
               }).toList();
+            } else {
+              updatedAppTransactions[targetAccount.id].add(appTransaction);
             }
-
-            updatedAppTransactions[targetAccount.id].add(appTransaction);
 
             // Update target account in cache
             int targetAccountIndex =

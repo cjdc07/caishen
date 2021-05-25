@@ -44,10 +44,13 @@ class _TransactionFormState extends State<TransactionForm> {
   String selectedTransferAccount;
   bool isSaving = false;
   String appTransactionTypeValue;
+  Account currentAccount;
 
   @override
   void initState() {
     super.initState();
+
+    currentAccount = widget.account;
 
     appTransactionTypeValue = widget.appTransaction == null
         ? widget.appTransactiontype
@@ -58,6 +61,13 @@ class _TransactionFormState extends State<TransactionForm> {
     });
 
     if (widget.appTransaction != null) {
+      if (appTransactionTypeValue == TRANSFER &&
+          widget.appTransaction.account.id != currentAccount.id) {
+        currentAccount = Provider.of<AccountNotifier>(context, listen: false)
+            .getAccounts()
+            .singleWhere((e) => e.id == widget.appTransaction.account.id);
+      }
+
       descriptionFieldController.value =
           TextEditingValue(text: widget.appTransaction.description);
 
@@ -142,7 +152,7 @@ class _TransactionFormState extends State<TransactionForm> {
           AppTransactionMutation(
             oldAppTransaction: widget.appTransaction,
             formKey: _formKey,
-            accountId: widget.account.id,
+            accountId: currentAccount.id,
             appTransactionTypeValue: appTransactionTypeValue,
             descriptionFieldController: descriptionFieldController,
             amountFieldController: amountFieldController,
@@ -195,8 +205,8 @@ class _TransactionFormState extends State<TransactionForm> {
                 AppNumberField(
                   controller: amountFieldController,
                   max: widget.appTransaction != null
-                      ? widget.account.balance + widget.appTransaction.amount
-                      : widget.account.balance,
+                      ? currentAccount.balance + widget.appTransaction.amount
+                      : currentAccount.balance,
                   hasMax: appTransactionTypeValue == EXPENSE ||
                       appTransactionTypeValue == TRANSFER,
                   hasMin: true,
@@ -255,11 +265,12 @@ class _TransactionFormState extends State<TransactionForm> {
                 appTransactionTypeValue == TRANSFER
                     ? FullScreenSelect(
                         title: 'Select Transfer Account',
-                        enabled: !isSaving,
+                        enabled:
+                            widget.appTransaction != null ? false : !isSaving,
                         items: Provider.of<AccountNotifier>(context,
                                 listen: false)
                             .getAccounts()
-                            .where((account) => account.id != widget.account.id)
+                            .where((account) => account.id != currentAccount.id)
                             .map(
                               (account) => (new FullScreenSelectItem(
                                 label: account.name,
@@ -280,7 +291,8 @@ class _TransactionFormState extends State<TransactionForm> {
                                   )
                                   .name
                               : 'To',
-                          style: selectedTransferAccount != null
+                          style: selectedTransferAccount != null &&
+                                  widget.appTransaction == null
                               ? TextStyle(color: Colors.white)
                               : TextStyle(color: Colors.white60),
                         ),
@@ -336,7 +348,8 @@ class _TransactionFormState extends State<TransactionForm> {
                           title: 'Select Category',
                           hasSearch: true,
                           enabled: !isSaving,
-                          selectedItemValue: selectedAppTransactionCategory?.key,
+                          selectedItemValue:
+                              selectedAppTransactionCategory?.key,
                           items: appTransactionCategoryItems,
                           fieldTitle: Text(
                             selectedAppTransactionCategory != null
