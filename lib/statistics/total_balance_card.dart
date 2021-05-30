@@ -12,6 +12,7 @@ class TotalBalanceCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
       child: Container(
         padding: EdgeInsets.symmetric(vertical: 24.0, horizontal: 24.0),

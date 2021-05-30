@@ -29,6 +29,8 @@ class CategoryAppTransactions extends StatelessWidget {
                 AppTransaction appTransaction = appTransactions[index];
 
                 return Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                   margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: AppTransactionItem(
                     account: null, // TODO: pass account of appTransaction

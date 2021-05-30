@@ -149,6 +149,8 @@ class AppTransactionsCardList extends StatelessWidget {
                         .toList();
 
                 return Card(
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20)),
                   margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: ExpansionTile(
                     initiallyExpanded: index == 0,

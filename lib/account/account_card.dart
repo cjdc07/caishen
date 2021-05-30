@@ -14,6 +14,8 @@ class AccountCard extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Card(
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
           color: Color.fromARGB(
             account.color.alpha,
             account.color.red,
@@ -22,11 +24,13 @@ class AccountCard extends StatelessWidget {
           ),
           margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
           child: ExpansionTile(
-            trailing: Icon(
-              Icons.bar_chart_rounded,
-            ),
+            trailing: Text(''),
+            // trailing: Icon(
+            //   Icons.bar_chart_rounded,
+            // ),
             initiallyExpanded: true,
             title: Container(
+              padding: EdgeInsets.symmetric(vertical: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
@@ -35,12 +39,13 @@ class AccountCard extends StatelessWidget {
                     style: TextStyle(
                       color: Colors.white,
                       fontWeight: FontWeight.bold,
+                      fontSize: 20.0,
                     ),
                   ),
                 ],
               ),
             ),
-            children: [Text("Account Stats Here")],
+            // children: [Text("Account Stats Here")],
           ),
         )
       ],

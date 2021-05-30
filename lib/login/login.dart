@@ -91,7 +91,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
 
-    _animation = Tween(begin: screenHeight / 3, end: screenHeight / 4)
+    _animation = Tween(begin: screenHeight / 3, end: screenHeight / 5)
         .animate(_controller)
           ..addListener(() {
             setState(() {});
@@ -106,7 +106,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
             children: [
               SizedBox(height: _animation.value),
               Container(
-                margin: EdgeInsets.only(bottom: 32.0),
+                margin: EdgeInsets.only(bottom: 24.0),
                 child: Column(
                   children: [
                     AppTextField(
@@ -140,6 +140,35 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                         ],
                 ),
                 onPressed: loading ? null : login,
+              ),
+              CupertinoButton(
+                padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Forgot Password',
+                      style: TextStyle(fontSize: 16, color: Colors.cyan),
+                    ),
+                  ],
+                ),
+                onPressed: () => print('Forgot password'),
+              ),
+              CupertinoButton(
+                padding: EdgeInsets.only(bottom: 0, top: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text(
+                      'Create Account',
+                      style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.cyan,
+                          decoration: TextDecoration.underline),
+                    ),
+                  ],
+                ),
+                onPressed: () => print('sign up'),
               ),
               errorMessage != null
                   ? Container(

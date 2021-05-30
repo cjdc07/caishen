@@ -37,6 +37,7 @@ class IncomeExpenseStatisticsCard extends StatelessWidget {
         .sort((a, b) => b.value['total'].compareTo(a.value['total']));
 
     return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
       child: ExpansionTile(
         title: Container(
