@@ -27,9 +27,15 @@ class FullScreenSelect extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.zero,
+      padding: EdgeInsets.symmetric(horizontal: 8),
       decoration: BoxDecoration(
-        border: Border(bottom: BorderSide(color: Colors.white38)),
+        borderRadius: BorderRadius.circular(8),
+        border: Border(
+          bottom: BorderSide(color: Colors.grey[900]),
+          top: BorderSide(color: Colors.grey[900]),
+          left: BorderSide(color: Colors.grey[900]),
+          right: BorderSide(color: Colors.grey[900]),
+        ),
       ),
       child: ListTile(
         enabled: enabled,

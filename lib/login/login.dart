@@ -114,7 +114,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
 
-    _animation = Tween(begin: screenHeight / 3, end: screenHeight / 5)
+    _animation = Tween(begin: screenHeight / 3, end: screenHeight / 4)
         .animate(_controller)
           ..addListener(() {
             setState(() {});
@@ -132,11 +132,14 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 margin: EdgeInsets.only(bottom: 24.0),
                 child: Column(
                   children: [
-                    AppTextField(
-                      enabled: !loading,
-                      controller: emailFieldController,
-                      label: 'Email',
-                      focusNode: _focusNodeEmailField,
+                    Padding(
+                      padding: EdgeInsets.only(bottom: 16.0),
+                      child: AppTextField(
+                        enabled: !loading,
+                        controller: emailFieldController,
+                        label: 'Email',
+                        focusNode: _focusNodeEmailField,
+                      ),
                     ),
                     AppTextField(
                       isPassword: true,

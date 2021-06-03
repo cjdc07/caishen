@@ -226,9 +226,16 @@ class _TransactionFormState extends State<TransactionForm> {
 
                 // Created date Field
                 Container(
-                  padding: EdgeInsets.zero,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
+                  margin: EdgeInsets.only(bottom: 10),
                   decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.white38)),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border(
+                      bottom: BorderSide(color: Colors.grey[900]),
+                      top: BorderSide(color: Colors.grey[900]),
+                      left: BorderSide(color: Colors.grey[900]),
+                      right: BorderSide(color: Colors.grey[900]),
+                    ),
                   ),
                   child: ListTile(
                     enabled: true,
@@ -344,136 +351,147 @@ class _TransactionFormState extends State<TransactionForm> {
                         appTransactionCategoryItems
                             .sort((a, b) => a.label.compareTo(b.label));
 
-                        return FullScreenSelect(
-                          title: 'Select Category',
-                          hasSearch: true,
-                          enabled: !isSaving,
-                          selectedItemValue:
-                              selectedAppTransactionCategory?.key,
-                          items: appTransactionCategoryItems,
-                          fieldTitle: Text(
-                            selectedAppTransactionCategory != null
-                                ? selectedAppTransactionCategory.value
-                                : 'Category',
-                            style: selectedAppTransactionCategory != null
-                                ? TextStyle(color: Colors.white)
-                                : TextStyle(color: Colors.white60),
-                          ),
-                          onTap: (FullScreenSelectItem category) {
-                            setCategoryField(
-                              context
-                                  .read<AppTransactionNotifier>()
-                                  .getAppTransactionCategories()
-                                  .singleWhere((appTransactionCategory) =>
-                                      appTransactionCategory.key ==
-                                      category.value),
-                            );
-                            Navigator.pop(context);
-                          },
-                          actions: [
-                            IconButton(
-                              icon: Icon(Icons.add, color: Colors.cyan),
-                              onPressed: () {
-                                return showDialog<void>(
-                                  context: context,
-                                  barrierDismissible: true,
-                                  builder: (BuildContext context) {
-                                    final TextEditingController
-                                        nameFieldController =
-                                        TextEditingController();
+                        return Padding(
+                          padding: EdgeInsets.only(bottom: 8),
+                          child: FullScreenSelect(
+                            title: 'Select Category',
+                            hasSearch: true,
+                            enabled: !isSaving,
+                            selectedItemValue:
+                                selectedAppTransactionCategory?.key,
+                            items: appTransactionCategoryItems,
+                            fieldTitle: Text(
+                              selectedAppTransactionCategory != null
+                                  ? selectedAppTransactionCategory.value
+                                  : 'Category',
+                              style: selectedAppTransactionCategory != null
+                                  ? TextStyle(color: Colors.white)
+                                  : TextStyle(color: Colors.white60),
+                            ),
+                            onTap: (FullScreenSelectItem category) {
+                              setCategoryField(
+                                context
+                                    .read<AppTransactionNotifier>()
+                                    .getAppTransactionCategories()
+                                    .singleWhere((appTransactionCategory) =>
+                                        appTransactionCategory.key ==
+                                        category.value),
+                              );
+                              Navigator.pop(context);
+                            },
+                            actions: [
+                              IconButton(
+                                icon: Icon(Icons.add, color: Colors.cyan),
+                                onPressed: () {
+                                  return showDialog<void>(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext context) {
+                                      final TextEditingController
+                                          nameFieldController =
+                                          TextEditingController();
 
-                                    return AlertDialog(
-                                      title: Text('New Category'),
-                                      content: AppTextField(
-                                        controller: nameFieldController,
-                                        enabled: true,
-                                        label: 'Name',
-                                      ),
-                                      actions: <Widget>[
-                                        TextButton(
-                                          child: Text(
-                                            'Cancel',
-                                            style: TextStyle(
-                                              color: Colors.red,
-                                            ),
-                                          ),
-                                          onPressed: () =>
-                                              Navigator.pop(context),
+                                      return AlertDialog(
+                                        title: Text('New Category'),
+                                        content: AppTextField(
+                                          controller: nameFieldController,
+                                          enabled: true,
+                                          label: 'Name',
                                         ),
-                                        TextButton(
-                                          child: Text(
-                                            'Create',
-                                            style: TextStyle(
-                                              color: Colors.cyan,
+                                        actions: <Widget>[
+                                          TextButton(
+                                            child: Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                color: Colors.red,
+                                              ),
                                             ),
+                                            onPressed: () =>
+                                                Navigator.pop(context),
                                           ),
-                                          onPressed: () async {
-                                            final CollectionReference
-                                                appTransactionCategoriesRef =
-                                                FirebaseFirestore.instance
-                                                    .collection(
-                                                        'appTransactionCategories');
+                                          TextButton(
+                                            child: Text(
+                                              'Create',
+                                              style: TextStyle(
+                                                color: Colors.cyan,
+                                              ),
+                                            ),
+                                            onPressed: () async {
+                                              final CollectionReference
+                                                  appTransactionCategoriesRef =
+                                                  FirebaseFirestore.instance
+                                                      .collection(
+                                                          'appTransactionCategories');
 
-                                            final appTransactionCategory =
-                                                AppTransactionCategory(
-                                              key: nameFieldController.text
-                                                  .toCamelCase(),
-                                              value: nameFieldController.text
-                                                  .trim(),
-                                              type: 'user',
-                                            );
+                                              final appTransactionCategory =
+                                                  AppTransactionCategory(
+                                                key: nameFieldController.text
+                                                    .toCamelCase(),
+                                                value: nameFieldController.text
+                                                    .trim(),
+                                                type: 'user',
+                                              );
 
-                                            // TODO: check for duplicates before adding
-                                            //       Show alert when category already exists
-                                            DocumentReference docRef =
-                                                await appTransactionCategoriesRef
-                                                    .add(appTransactionCategory
-                                                        .toMap());
+                                              // TODO: check for duplicates before adding
+                                              //       Show alert when category already exists
+                                              DocumentReference docRef =
+                                                  await appTransactionCategoriesRef
+                                                      .add(
+                                                          appTransactionCategory
+                                                              .toMap());
 
-                                            appTransactionCategory.id =
-                                                docRef.id;
+                                              appTransactionCategory.id =
+                                                  docRef.id;
 
-                                            List<AppTransactionCategory>
-                                                appTransactionCategories =
-                                                context
-                                                    .read<
-                                                        AppTransactionNotifier>()
-                                                    .getAppTransactionCategories();
+                                              List<AppTransactionCategory>
+                                                  appTransactionCategories =
+                                                  context
+                                                      .read<
+                                                          AppTransactionNotifier>()
+                                                      .getAppTransactionCategories();
 
-                                            context
-                                                .read<AppTransactionNotifier>()
-                                                .setAppTransactionCategories(
-                                              [
-                                                ...appTransactionCategories,
-                                                appTransactionCategory
-                                              ],
-                                              notify: true,
-                                            );
+                                              context
+                                                  .read<
+                                                      AppTransactionNotifier>()
+                                                  .setAppTransactionCategories(
+                                                [
+                                                  ...appTransactionCategories,
+                                                  appTransactionCategory
+                                                ],
+                                                notify: true,
+                                              );
 
-                                            setCategoryField(
-                                                appTransactionCategory);
+                                              setCategoryField(
+                                                  appTransactionCategory);
 
-                                            // Pop twice to go back to form
-                                            Navigator.pop(context);
-                                            Navigator.pop(context);
-                                          },
-                                        )
-                                      ],
-                                    );
-                                  },
-                                );
-                              },
-                            )
-                          ],
+                                              // Pop twice to go back to form
+                                              Navigator.pop(context);
+                                              Navigator.pop(context);
+                                            },
+                                          )
+                                        ],
+                                      );
+                                    },
+                                  );
+                                },
+                              )
+                            ],
+                          ),
                         );
                       })
                     : Container(),
 
                 // Notes Field
                 Container(
-                  padding: EdgeInsets.zero,
+                  padding: EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
-                    border: Border(bottom: BorderSide(color: Colors.white38)),
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border(
+                      bottom: BorderSide(color: Colors.grey[900]),
+                      top: BorderSide(color: Colors.grey[900]),
+                      left: BorderSide(color: Colors.grey[900]),
+                      right: BorderSide(color: Colors.grey[900]),
+                    ),
                   ),
                   child: ListTile(
                     // TODO: Create common widget for this ListTile

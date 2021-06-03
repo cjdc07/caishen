@@ -42,24 +42,32 @@ class _AppDropDownFieldState extends State<AppDropDownField>
 
   @override
   Widget build(BuildContext context) {
-    return DropdownButtonFormField(
-      decoration: InputDecoration(
-        labelText: widget.label,
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.cyan),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.0),
+      child: DropdownButtonFormField(
+        decoration: InputDecoration(
+          labelText: widget.label,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.cyan, width: 0.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey[800], width: 0.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
+        items: createDropDownMenuItems(),
+        hint: selectedValue != null ? Text(selectedValue) : null,
+        onChanged: widget.enabled ? (value) => widget.controller(value) : null,
+        value: widget.defaultValue,
+        validator: (value) {
+          setSelectedValue(value);
+          return validate(
+            value,
+            FieldValidationOptions(),
+          );
+        },
       ),
-      items: createDropDownMenuItems(),
-      hint: selectedValue != null ? Text(selectedValue) : null,
-      onChanged: widget.enabled ? (value) => widget.controller(value) : null,
-      value: widget.defaultValue,
-      validator: (value) {
-        setSelectedValue(value);
-        return validate(
-          value,
-          FieldValidationOptions(),
-        );
-      },
     );
   }
 }

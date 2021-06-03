@@ -23,24 +23,32 @@ class AppTextField extends StatelessWidget with FieldValidation {
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
-      enabled: enabled,
-      decoration: InputDecoration(
-        labelText: label,
-        focusedBorder: UnderlineInputBorder(
-          borderSide: BorderSide(color: Colors.cyan),
+    return Padding(
+      padding: EdgeInsets.only(bottom: 10.0),
+      child: TextFormField(
+        enabled: enabled,
+        decoration: InputDecoration(
+          labelText: label,
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.cyan, width: 0.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey[800], width: 0.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
+        controller: controller,
+        validator: (value) => validate(
+          value,
+          FieldValidationOptions(),
+        ),
+        cursorColor: Colors.cyan,
+        minLines: minLines,
+        maxLines: maxLines,
+        obscureText: isPassword,
+        focusNode: focusNode,
       ),
-      controller: controller,
-      validator: (value) => validate(
-        value,
-        FieldValidationOptions(),
-      ),
-      cursorColor: Colors.cyan,
-      minLines: minLines,
-      maxLines: maxLines,
-      obscureText: isPassword,
-      focusNode: focusNode,
     );
   }
 }
