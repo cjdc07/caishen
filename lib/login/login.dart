@@ -60,6 +60,8 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   }
 
   void login() async {
+    bool userExists = true;
+
     if (!formKey.currentState.validate()) {
       return;
     }
@@ -76,15 +78,36 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
       print(credentials);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
-        errorMessage = 'No user found for that email.';
+        userExists = false;
       } else if (e.code == 'wrong-password') {
         errorMessage = 'Wrong password provided for that user.';
       } else {
         errorMessage = e.message;
       }
-    } finally {
-      setLoading();
     }
+
+    if (!userExists) {
+      try {
+        UserCredential credentials =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: emailFieldController.text.trim(),
+          password: passwordFieldController.text.trim(),
+        );
+
+        print(credentials);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'weak-password') {
+          errorMessage = 'The password provided is too weak.';
+        } else if (e.code == 'email-already-in-use') {
+          errorMessage = 'The account already exists for that email.';
+        }
+      } catch (e) {
+        errorMessage = e.message;
+        print(e);
+      }
+    }
+
+    setLoading();
   }
 
   @override
@@ -133,7 +156,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                       ? [Center(child: CircularProgressIndicator())]
                       : [
                           const Text(
-                            'Login ',
+                            'Login/Register ',
                             style: TextStyle(fontSize: 16),
                           ),
                           Icon(Icons.login_rounded),
@@ -153,22 +176,6 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                   ],
                 ),
                 onPressed: () => print('Forgot password'),
-              ),
-              CupertinoButton(
-                padding: EdgeInsets.only(bottom: 0, top: 8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    const Text(
-                      'Create Account',
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.cyan,
-                          decoration: TextDecoration.underline),
-                    ),
-                  ],
-                ),
-                onPressed: () => print('sign up'),
               ),
               errorMessage != null
                   ? Container(
