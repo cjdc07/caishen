@@ -172,10 +172,7 @@ class _TransactionFormState extends State<TransactionForm> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Container(
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 8.0,
-            ),
+            padding: EdgeInsets.all(8.0),
             child: ListView(
               children: <Widget>[
                 // Transaction Type Field

@@ -37,6 +37,18 @@ class AppTextField extends StatelessWidget with FieldValidation {
             borderSide: BorderSide(color: Colors.grey[800], width: 0.5),
             borderRadius: BorderRadius.circular(8),
           ),
+          disabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey[800], width: 0.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          errorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red, width: 0.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          focusedErrorBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.red, width: 0.5),
+            borderRadius: BorderRadius.circular(8),
+          ),
         ),
         controller: controller,
         validator: (value) => validate(

@@ -133,7 +133,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 child: Column(
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(bottom: 16.0),
+                      padding: EdgeInsets.only(bottom: 8.0),
                       child: AppTextField(
                         enabled: !loading,
                         controller: emailFieldController,

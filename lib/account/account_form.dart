@@ -89,10 +89,7 @@ class _AccountFormState extends State<AccountForm> {
         autovalidateMode: AutovalidateMode.onUserInteraction,
         child: Container(
           child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: 16.0,
-              vertical: 8.0,
-            ),
+            padding: EdgeInsets.all(8.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
