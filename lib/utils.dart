@@ -8,8 +8,8 @@ String getPrettyJSONString(Object jsonObject) {
 
 String formatToCurrency(dynamic value) {
   return NumberFormat.currency(
-    locale: "en_PH",
-    symbol: "₱",
+    locale: 'en_US',
+    symbol: '₱',
   ).format(value);
 }
 

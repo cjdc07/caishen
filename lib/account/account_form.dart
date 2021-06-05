@@ -5,6 +5,7 @@ import 'package:cjdc_money_manager/common/app_number_field.dart';
 import 'package:cjdc_money_manager/common/app_text_field.dart';
 import 'package:cjdc_money_manager/common/full_screen_select/full_screen_select.dart';
 import 'package:cjdc_money_manager/constants.dart';
+import 'package:cjdc_money_manager/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +37,7 @@ class _AccountFormState extends State<AccountForm> {
       isUpdate = true;
       nameFieldController.value = TextEditingValue(text: widget.account.name);
       balanceFieldController.value = TextEditingValue(
-        text: widget.account.balance.toString(),
+        text: formatToCurrency(widget.account.balance),
       );
       type = FullScreenSelectItem(
         label: widget.account.type.value,

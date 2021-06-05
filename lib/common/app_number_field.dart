@@ -1,5 +1,6 @@
 import 'package:cjdc_money_manager/common/field_validation.dart';
 import 'package:flutter/material.dart';
+import 'package:currency_text_input_formatter/currency_text_input_formatter.dart';
 
 class AppNumberField extends StatelessWidget with FieldValidation {
   final TextEditingController controller;
@@ -26,6 +27,12 @@ class AppNumberField extends StatelessWidget with FieldValidation {
     return Padding(
       padding: EdgeInsets.only(bottom: 10.0),
       child: TextFormField(
+        inputFormatters: [
+          CurrencyTextInputFormatter(
+            locale: 'en_US',
+            symbol: '₱',
+          )
+        ],
         enabled: enabled,
         decoration: InputDecoration(
           labelText: label,
@@ -54,7 +61,6 @@ class AppNumberField extends StatelessWidget with FieldValidation {
         validator: (value) => validate(
           value,
           FieldValidationOptions(
-            isNumber: true,
             max: max != null ? max : 0,
             min: min != null ? min : 0,
             hasMax: hasMax != null ? hasMax : false,

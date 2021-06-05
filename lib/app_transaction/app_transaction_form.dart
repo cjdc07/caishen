@@ -71,8 +71,8 @@ class _TransactionFormState extends State<TransactionForm> {
       descriptionFieldController.value =
           TextEditingValue(text: widget.appTransaction.description);
 
-      amountFieldController.value =
-          TextEditingValue(text: widget.appTransaction.amount.toString());
+      amountFieldController.value = TextEditingValue(
+          text: formatToCurrency(widget.appTransaction.amount));
 
       dateTimeValue = widget.appTransaction.createdAt;
 

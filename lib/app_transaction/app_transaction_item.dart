@@ -201,7 +201,7 @@ class _AppTransactionItemState extends State<AppTransactionItem> {
         child: Container(
           child: ListTile(
             trailing: Text(
-              '${isReceived ? "+" : "-"}${formatToCurrency(widget.appTransaction.amount)}',
+              '${isReceived ? '+' : '-'}${formatToCurrency(widget.appTransaction.amount)}',
               style: TextStyle(
                 color: isReceived ? Colors.green : Colors.red,
                 fontWeight: FontWeight.bold,

@@ -81,7 +81,11 @@ class AppTransactionMutation extends StatelessWidget {
         AppTransaction appTransaction = new AppTransaction(
           id: oldAppTransaction != null ? oldAppTransaction.id : null,
           account: accountDocumentRef,
-          amount: double.parse(amountFieldController.text.trim()),
+          amount: double.parse(
+            amountFieldController.text
+                .trim()
+                .replaceAll(RegExp(',|[a-zA-Z₱\$]'), ''),
+          ),
           category: appTransactionCategoryDocumentRef,
           description: appTransactionTypeValue != TRANSFER
               ? descriptionFieldController.text.trim()

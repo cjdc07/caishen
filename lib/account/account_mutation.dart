@@ -60,7 +60,11 @@ class AccountMutation extends StatelessWidget {
         Account account = new Account(
           id: oldAccount != null ? oldAccount.id : null,
           name: nameFieldController.text.trim(),
-          balance: double.parse(balanceFieldController.text.trim()),
+          balance: double.parse(
+            balanceFieldController.text
+                .trim()
+                .replaceAll(RegExp(',|[a-zA-Z₱\$]'), ''),
+          ),
           color: color,
           type: type,
           createdAt: oldAccount != null ? oldAccount.createdAt : now,
