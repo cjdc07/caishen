@@ -2,12 +2,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class Profile extends StatefulWidget {
+class UserProfilePage extends StatefulWidget {
   @override
-  _ProfileState createState() => _ProfileState();
+  _UserProfilePage createState() => _UserProfilePage();
 }
 
-class _ProfileState extends State<Profile> {
+class _UserProfilePage extends State<UserProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,6 +33,5 @@ class _ProfileState extends State<Profile> {
         ),
       ),
     );
-    ;
   }
 }

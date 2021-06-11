@@ -3,11 +3,13 @@ import 'package:cjdc_money_manager/app_transaction/app_transaction_mutation.dart
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/user_profile_notifier.dart';
 import 'package:cjdc_money_manager/common/app_dropdown_field.dart';
 import 'package:cjdc_money_manager/common/app_number_field.dart';
 import 'package:cjdc_money_manager/common/app_text_field.dart';
 import 'package:cjdc_money_manager/common/full_screen_select/full_screen_select.dart';
 import 'package:cjdc_money_manager/constants.dart';
+import 'package:cjdc_money_manager/user_profile/user_profile_model.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
@@ -414,6 +416,10 @@ class _TransactionFormState extends State<TransactionForm> {
                                               ),
                                             ),
                                             onPressed: () async {
+                                              UserProfile userProfile = context
+                                                  .read<UserProfileNotifier>()
+                                                  .getUserProfile();
+
                                               final CollectionReference
                                                   appTransactionCategoriesRef =
                                                   FirebaseFirestore.instance
@@ -427,6 +433,7 @@ class _TransactionFormState extends State<TransactionForm> {
                                                 value: nameFieldController.text
                                                     .trim(),
                                                 type: 'user',
+                                                user: userProfile.id,
                                               );
 
                                               // TODO: check for duplicates before adding
@@ -480,6 +487,8 @@ class _TransactionFormState extends State<TransactionForm> {
 
                 // Notes Field
                 Container(
+                  margin: EdgeInsets.only(
+                      top: appTransactionTypeValue != TRANSFER ? 0 : 10),
                   padding: EdgeInsets.symmetric(horizontal: 8),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),

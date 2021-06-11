@@ -2,13 +2,13 @@ import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/user_profile_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
+import 'package:cjdc_money_manager/user_profile/user_profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-// TODO:
-// 1. Delete name field in appTransactionCategories
 class AccountMutation extends StatelessWidget {
   final formKey;
   final TextEditingController nameFieldController;
@@ -46,6 +46,9 @@ class AccountMutation extends StatelessWidget {
 
         setIsLoading(true);
 
+        UserProfile userProfile =
+            context.read<UserProfileNotifier>().getUserProfile();
+
         final CollectionReference accountCollectionRef =
             FirebaseFirestore.instance.collection('accounts');
 
@@ -69,6 +72,7 @@ class AccountMutation extends StatelessWidget {
           type: type,
           createdAt: oldAccount != null ? oldAccount.createdAt : now,
           updatedAt: now,
+          user: userProfile.id,
         );
 
         List<Account> accounts = context.read<AccountNotifier>().getAccounts();
@@ -100,6 +104,7 @@ class AccountMutation extends StatelessWidget {
               description: 'Account Adjustment',
               to: 'me',
               type: INCOME,
+              user: userProfile.id,
             );
 
             appTransactionDocRef =
@@ -121,6 +126,7 @@ class AccountMutation extends StatelessWidget {
               description: 'Account Adjustment',
               to: 'me',
               type: EXPENSE,
+              user: userProfile.id,
             );
 
             appTransactionDocRef =
@@ -150,6 +156,7 @@ class AccountMutation extends StatelessWidget {
             description: 'Initial Balance',
             to: 'me',
             type: INCOME,
+            user: userProfile.id,
           );
 
           appTransactionDocRef =

@@ -73,6 +73,7 @@ class Account {
   final AccountType type;
   final DateTime createdAt;
   final DateTime updatedAt;
+  final String user;
 
   Account({
     this.id,
@@ -82,6 +83,7 @@ class Account {
     this.type,
     this.createdAt,
     this.updatedAt,
+    this.user,
   });
 
   void deduct(double amount) {
@@ -103,6 +105,7 @@ class Account {
       type: AccountType.parse(data['type']),
       createdAt: data['createdAt'].toDate(),
       updatedAt: data['updatedAt'].toDate(),
+      user: data['user'],
     );
   }
 
@@ -122,11 +125,12 @@ class Account {
       'type': type.toMap(),
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'user': user,
     };
   }
 
   @override
   String toString() {
-    return "{ id: $id, name: $name, balance: $balance, color: ${color.toString()}, type: ${type.toString()}, createdAt: $createdAt, updatedAt: $updatedAt}";
+    return "{ id: $id, name: $name, balance: $balance, color: ${color.toString()}, type: ${type.toString()}, createdAt: $createdAt, updatedAt: $updatedAt, user: $user}";
   }
 }

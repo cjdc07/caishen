@@ -3,17 +3,21 @@ import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/cash_flow/cash_flow.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
-import 'package:cjdc_money_manager/profile/profile.dart';
+import 'package:cjdc_money_manager/change_notifiers/user_profile_notifier.dart';
+import 'package:cjdc_money_manager/user_profile/user_profile_model.dart';
+import 'package:cjdc_money_manager/user_profile/user_profile_page.dart';
 import 'package:cjdc_money_manager/statistics/statistics.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class AppNavigation extends StatefulWidget {
+  final UserProfile userProfile;
   final List<Account> accounts;
   final List<AppTransactionCategory> appTransactionCategories;
 
   const AppNavigation({
     Key key,
+    this.userProfile,
     this.accounts,
     this.appTransactionCategories,
   }) : super(key: key);
@@ -38,14 +42,16 @@ class _AppNavigationState extends State<AppNavigation> {
     //   crossAxisAlignment: CrossAxisAlignment.center,
     //   mainAxisAlignment: MainAxisAlignment.center,
     // ),
-    Profile(),
+    UserProfilePage(),
   ];
 
   @override
   void initState() {
     super.initState();
+
     Provider.of<AccountNotifier>(context, listen: false)
         .setAccounts(widget.accounts);
+
     Provider.of<AppTransactionNotifier>(context, listen: false)
         .setAppTransactionCategories(widget.appTransactionCategories);
   }

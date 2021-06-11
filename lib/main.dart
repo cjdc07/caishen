@@ -3,8 +3,10 @@ import 'package:cjdc_money_manager/app_navigation.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/user_profile_notifier.dart';
 import 'package:cjdc_money_manager/login/login.dart';
 import 'package:cjdc_money_manager/resources/app_config.dart';
+import 'package:cjdc_money_manager/user_profile/user_profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -19,7 +21,8 @@ class App extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (context) => AccountNotifier()),
-        ChangeNotifierProvider(create: (context) => AppTransactionNotifier())
+        ChangeNotifierProvider(create: (context) => AppTransactionNotifier()),
+        ChangeNotifierProvider(create: (context) => UserProfileNotifier())
       ],
       child: MaterialApp(
         title: AppConfig.of(context).appTitle,
@@ -60,6 +63,14 @@ class App extends StatelessWidget {
                     User user = snapshot.data;
 
                     if (user != null) {
+                      UserProfile userProfile = UserProfile(
+                        id: user.uid,
+                        email: user.email,
+                      );
+
+                      Provider.of<UserProfileNotifier>(context, listen: false)
+                          .setUserProfile(userProfile);
+
                       final CollectionReference accountsRef =
                           FirebaseFirestore.instance.collection('accounts');
 
@@ -112,6 +123,7 @@ class App extends StatelessWidget {
                           }).toList();
 
                           return AppNavigation(
+                            userProfile: userProfile,
                             accounts: accounts,
                             appTransactionCategories: appTransactionCategories,
                           );

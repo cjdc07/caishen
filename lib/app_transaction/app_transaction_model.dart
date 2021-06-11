@@ -12,6 +12,7 @@ class AppTransaction {
   final DateTime updatedAt;
   final String type;
   final String notes;
+  final String user;
 
   AppTransaction({
     this.id,
@@ -25,6 +26,7 @@ class AppTransaction {
     this.updatedAt,
     this.type,
     this.notes,
+    this.user,
   });
 
   static AppTransaction parse(Map<String, dynamic> data) {
@@ -42,6 +44,7 @@ class AppTransaction {
       createdAt: data['createdAt'].toDate(),
       updatedAt: data['updatedAt'].toDate(),
       notes: data['notes'],
+      user: data['user'],
     );
   }
 
@@ -88,12 +91,13 @@ class AppTransaction {
       'notes': notes,
       'createdAt': createdAt,
       'updatedAt': updatedAt,
+      'user': user,
     };
   }
 
   @override
   String toString() {
-    return "{ id: $id, account: $account, description: $description, \ to: $to, from: $from, category: ${category.toString()}, amount: $amount, type: $type, createdAt: $createdAt, updatedAt: $updatedAt }";
+    return '{ id: $id, account: $account, description: $description, \ to: $to, from: $from, category: ${category.toString()}, amount: $amount, type: $type, createdAt: $createdAt, updatedAt: $updatedAt, user: $user }';
   }
 }
 
@@ -102,12 +106,14 @@ class AppTransactionCategory {
   final String key;
   final String type;
   final String value;
+  final String user;
 
   AppTransactionCategory({
     this.id,
     this.key,
     this.type,
     this.value,
+    this.user,
   });
 
   Map<String, dynamic> toMap() {
@@ -115,6 +121,7 @@ class AppTransactionCategory {
       'key': key,
       'type': type,
       'value': value,
+      'user': user,
     };
   }
 
@@ -124,6 +131,7 @@ class AppTransactionCategory {
       key: data['key'],
       type: data['type'],
       value: data['value'],
+      user: data['user'],
     );
   }
 
@@ -138,6 +146,6 @@ class AppTransactionCategory {
 
   @override
   String toString() {
-    return '{ id: $id, key: $key, type: $type, value: $value }';
+    return '{ id: $id, key: $key, type: $type, value: $value, user: $user }';
   }
 }

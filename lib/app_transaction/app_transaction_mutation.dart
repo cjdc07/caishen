@@ -2,7 +2,9 @@ import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/user_profile_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
+import 'package:cjdc_money_manager/user_profile/user_profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -57,6 +59,9 @@ class AppTransactionMutation extends StatelessWidget {
 
         setIsSaving(true);
 
+        UserProfile userProfile =
+            context.read<UserProfileNotifier>().getUserProfile();
+
         final CollectionReference appTransactionsRef =
             FirebaseFirestore.instance.collection('appTransactions');
 
@@ -104,6 +109,7 @@ class AppTransactionMutation extends StatelessWidget {
           type: appTransactionTypeValue.trim(),
           createdAt: dateTimeValue,
           updatedAt: dateTimeValue,
+          user: userProfile.id,
         );
 
         DocumentSnapshot snapshot = await accountDocumentRef.get();
