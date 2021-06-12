@@ -80,8 +80,12 @@ class App extends StatelessWidget {
 
                       return FutureBuilder<List<QuerySnapshot>>(
                         future: Future.wait([
-                          accountsRef.orderBy('name').get(),
-                          appTransactionsCategoriesRef.get(),
+                          accountsRef
+                              .where('user', isEqualTo: userProfile.id)
+                              .orderBy('name')
+                              .get(),
+                          appTransactionsCategoriesRef.where('user',
+                              whereIn: [userProfile.id, 'system']).get(),
                         ]),
                         builder: (
                           BuildContext context,

@@ -1,6 +1,10 @@
+import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/user_profile_notifier.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class UserProfilePage extends StatefulWidget {
   @override
@@ -27,6 +31,11 @@ class _UserProfilePage extends State<UserProfilePage> {
               ],
             ),
             onPressed: () async {
+              Provider.of<UserProfileNotifier>(context, listen: false).reset();
+              Provider.of<AccountNotifier>(context, listen: false).reset();
+              Provider.of<AppTransactionNotifier>(context, listen: false)
+                  .reset();
+
               await FirebaseAuth.instance.signOut();
             },
           ),

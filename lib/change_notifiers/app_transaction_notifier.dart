@@ -31,4 +31,9 @@ class AppTransactionNotifier extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void reset() {
+    _appTransactions = new Map<String, List<AppTransaction>>();
+    _appTransactionCategories = null;
+  }
 }

@@ -33,4 +33,10 @@ class AccountNotifier extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void reset() {
+    _accounts = null;
+    _selectedAccount = null;
+    _selectedAppTransactionType = null;
+  }
 }

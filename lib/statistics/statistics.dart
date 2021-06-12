@@ -2,9 +2,11 @@ import 'package:cjdc_money_manager/account/account_model.dart';
 import 'package:cjdc_money_manager/app_transaction/app_transaction_model.dart';
 import 'package:cjdc_money_manager/change_notifiers/account_notifier.dart';
 import 'package:cjdc_money_manager/change_notifiers/app_transaction_notifier.dart';
+import 'package:cjdc_money_manager/change_notifiers/user_profile_notifier.dart';
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/statistics/income_expense_statistics_card.dart';
 import 'package:cjdc_money_manager/statistics/total_balance_card.dart';
+import 'package:cjdc_money_manager/user_profile/user_profile_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -104,6 +106,11 @@ class _StatisticsState extends State<Statistics> {
   @override
   Widget build(BuildContext context) {
     print('statistics: you should only see me once');
+
+    UserProfile userProfile =
+        Provider.of<UserProfileNotifier>(context, listen: false)
+            .getUserProfile();
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -128,16 +135,18 @@ class _StatisticsState extends State<Statistics> {
           FutureBuilder<QuerySnapshot>(
             future: FirebaseFirestore.instance
                 .collection('appTransactions')
-                .where(
-                  'createdAt',
-                  isGreaterThanOrEqualTo:
-                      new DateTime(year, month), // Start of month
-                )
-                .where(
-                  'createdAt',
-                  isLessThanOrEqualTo:
-                      new DateTime(year, month + 1, 0), // End of month
-                )
+                .where('user', isEqualTo: userProfile.id)
+                // TODO: this will query all transactions of the user. expensive query
+                // .where(
+                //   'createdAt',
+                //   isGreaterThanOrEqualTo:
+                //       new DateTime(year, month), // Start of month
+                // )
+                // .where(
+                //   'createdAt',
+                //   isLessThanOrEqualTo:
+                //       new DateTime(year, month + 1, 0), // End of month
+                // )
                 .get(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {

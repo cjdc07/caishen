@@ -40,6 +40,7 @@ class IncomeExpenseStatisticsCard extends StatelessWidget {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
       child: ExpansionTile(
+        initiallyExpanded: true,
         title: Container(
           padding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
           child: Column(

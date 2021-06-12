@@ -12,4 +12,8 @@ class UserProfileNotifier extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  void reset() {
+    _userProfile = null;
+  }
 }
