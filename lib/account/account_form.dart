@@ -28,6 +28,7 @@ class _AccountFormState extends State<AccountForm> {
   FullScreenSelectItem type;
   bool isLoading = false;
   bool isUpdate = false;
+  List<String> errors = [];
 
   @override
   void initState() {
@@ -62,6 +63,7 @@ class _AccountFormState extends State<AccountForm> {
   void setTypeField(FullScreenSelectItem type) {
     setState(() {
       this.type = type;
+      this.errors = [];
     });
   }
 
@@ -82,6 +84,17 @@ class _AccountFormState extends State<AccountForm> {
             setIsLoading: setIsLoading,
             isLoading: isLoading,
             oldAccount: widget.account,
+            validate: () {
+              if (type == null) {
+                setState(() {
+                  this.errors = ['Please select account type'];
+                });
+
+                return false;
+              }
+
+              return true;
+            },
           ),
         ],
       ),
@@ -111,7 +124,6 @@ class _AccountFormState extends State<AccountForm> {
                 ),
 
                 /* Account type field */
-                // TODO: Add validation here!
                 FullScreenSelect(
                   enabled: !isLoading,
                   title: 'Account Type',
@@ -126,6 +138,7 @@ class _AccountFormState extends State<AccountForm> {
                     setTypeField(type);
                     Navigator.pop(context);
                   },
+                  errors: errors,
                 ),
 
                 /* Account color picker */

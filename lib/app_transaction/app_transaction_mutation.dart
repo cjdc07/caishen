@@ -25,6 +25,7 @@ class AppTransactionMutation extends StatelessWidget {
   final Function setIsSaving;
   final bool isSaving;
   final DateTime dateTimeValue;
+  final Function validate;
 
   AppTransactionMutation({
     Key key,
@@ -42,6 +43,7 @@ class AppTransactionMutation extends StatelessWidget {
     @required this.setIsSaving,
     @required this.isSaving,
     @required this.dateTimeValue,
+    this.validate,
   }) : super(key: key);
 
   @override
@@ -53,7 +55,18 @@ class AppTransactionMutation extends StatelessWidget {
     return IconButton(
       icon: Icon(Icons.check, color: Colors.cyan),
       onPressed: () async {
+        bool categoryFieldValid;
+
+        // Validate type field
+        if (validate != null) {
+          categoryFieldValid = validate();
+        }
+
         if (!formKey.currentState.validate()) {
+          return;
+        }
+
+        if (!categoryFieldValid) {
           return;
         }
 

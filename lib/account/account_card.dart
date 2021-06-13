@@ -15,7 +15,7 @@ class AccountCard extends StatelessWidget {
       children: <Widget>[
         Card(
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           color: Color.fromARGB(
             account.color.alpha,
             account.color.red,

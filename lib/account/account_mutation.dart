@@ -18,6 +18,7 @@ class AccountMutation extends StatelessWidget {
   final Function setIsLoading;
   final bool isLoading;
   final Account oldAccount; // if null, create new else update
+  final Function validate;
 
   AccountMutation({
     Key key,
@@ -29,6 +30,7 @@ class AccountMutation extends StatelessWidget {
     @required this.setIsLoading,
     @required this.isLoading,
     @required this.oldAccount,
+    this.validate,
   }) : super(key: key);
 
   @override
@@ -40,7 +42,18 @@ class AccountMutation extends StatelessWidget {
     return IconButton(
       icon: Icon(Icons.check, color: Colors.green),
       onPressed: () async {
+        bool typeFieldValid;
+
+        // Validate type field
+        if (validate != null) {
+          typeFieldValid = validate();
+        }
+
         if (!formKey.currentState.validate()) {
+          return;
+        }
+
+        if (!typeFieldValid) {
           return;
         }
 

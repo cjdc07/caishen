@@ -150,7 +150,7 @@ class AppTransactionsCardList extends StatelessWidget {
 
                 return Card(
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20)),
+                      borderRadius: BorderRadius.circular(16)),
                   margin: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
                   child: ExpansionTile(
                     initiallyExpanded: index == 0,

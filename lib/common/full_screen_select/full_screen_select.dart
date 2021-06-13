@@ -11,6 +11,7 @@ class FullScreenSelect extends StatelessWidget {
   final dynamic selectedItemValue;
   final List<Widget> actions;
   final bool hasSearch;
+  final List<String> errors;
 
   FullScreenSelect({
     Key key,
@@ -22,6 +23,7 @@ class FullScreenSelect extends StatelessWidget {
     this.actions,
     this.hasSearch = false,
     this.selectedItemValue,
+    this.errors,
   }) : super(key: key);
 
   @override
@@ -31,10 +33,22 @@ class FullScreenSelect extends StatelessWidget {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(8),
         border: Border(
-          bottom: BorderSide(color: Colors.grey[900]),
-          top: BorderSide(color: Colors.grey[900]),
-          left: BorderSide(color: Colors.grey[900]),
-          right: BorderSide(color: Colors.grey[900]),
+          bottom: BorderSide(
+            color: errors.isNotEmpty ? Colors.red : Colors.grey[900],
+            width: errors.isNotEmpty ? 0.5 : 1.0,
+          ),
+          top: BorderSide(
+            color: errors.isNotEmpty ? Colors.red : Colors.grey[900],
+            width: errors.isNotEmpty ? 0.5 : 1.0,
+          ),
+          left: BorderSide(
+            color: errors.isNotEmpty ? Colors.red : Colors.grey[900],
+            width: errors.isNotEmpty ? 0.5 : 1.0,
+          ),
+          right: BorderSide(
+            color: errors.isNotEmpty ? Colors.red : Colors.grey[900],
+            width: errors.isNotEmpty ? 0.5 : 1.0,
+          ),
         ),
       ),
       child: ListTile(

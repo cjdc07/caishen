@@ -183,6 +183,7 @@ class _CashFlowState extends State<CashFlow> {
                 children: [
                   Text(
                     selectedAccount.name,
+                    style: TextStyle(fontSize: 24.0),
                   ),
                   Icon(Icons.arrow_drop_down),
                 ],

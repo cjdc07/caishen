@@ -24,7 +24,7 @@ class TotalBalanceCard extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Total Balance',
+                  'Net Worth',
                   style: TextStyle(fontSize: 16),
                 ),
               ],

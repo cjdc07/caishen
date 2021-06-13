@@ -114,7 +114,10 @@ class _StatisticsState extends State<Statistics> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
-        title: Text('Statistics'),
+        title: Text(
+          'Statistics',
+          style: TextStyle(fontSize: 24),
+        ),
       ),
       body: ListView(
         children: [

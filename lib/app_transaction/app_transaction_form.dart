@@ -47,6 +47,7 @@ class _TransactionFormState extends State<TransactionForm> {
   bool isSaving = false;
   String appTransactionTypeValue;
   Account currentAccount;
+  List<String> errors = [];
 
   @override
   void initState() {
@@ -126,6 +127,7 @@ class _TransactionFormState extends State<TransactionForm> {
   void setCategoryField(AppTransactionCategory appTransactionCategory) {
     setState(() {
       selectedAppTransactionCategory = appTransactionCategory;
+      this.errors = [];
     });
   }
 
@@ -166,6 +168,17 @@ class _TransactionFormState extends State<TransactionForm> {
             setIsSaving: setIsSaving,
             isSaving: isSaving,
             dateTimeValue: dateTimeValue,
+            validate: () {
+              if (selectedAppTransactionCategory == null) {
+                setState(() {
+                  this.errors = ['Please select category'];
+                });
+
+                return false;
+              }
+
+              return true;
+            },
           ),
         ],
       ),
@@ -353,6 +366,7 @@ class _TransactionFormState extends State<TransactionForm> {
                         return Padding(
                           padding: EdgeInsets.only(bottom: 8),
                           child: FullScreenSelect(
+                            errors: errors,
                             title: 'Select Category',
                             hasSearch: true,
                             enabled: !isSaving,
