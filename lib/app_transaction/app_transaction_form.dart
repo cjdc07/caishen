@@ -121,6 +121,7 @@ class _TransactionFormState extends State<TransactionForm> {
   void setTransferAccountField(String accountId) {
     setState(() {
       selectedTransferAccount = accountId;
+      this.errors = [];
     });
   }
 
@@ -169,11 +170,21 @@ class _TransactionFormState extends State<TransactionForm> {
             isSaving: isSaving,
             dateTimeValue: dateTimeValue,
             validate: () {
-              if (selectedAppTransactionCategory == null) {
+              if (appTransactionTypeValue != TRANSFER &&
+                  selectedAppTransactionCategory == null) {
                 setState(() {
                   this.errors = ['Please select category'];
                 });
+              }
 
+              if (appTransactionTypeValue == TRANSFER &&
+                  selectedTransferAccount == null) {
+                setState(() {
+                  this.errors = ['Please select account to transfer'];
+                });
+              }
+
+              if (this.errors.length > 0) {
                 return false;
               }
 
@@ -283,6 +294,7 @@ class _TransactionFormState extends State<TransactionForm> {
                 // To Field for Transfer
                 appTransactionTypeValue == TRANSFER
                     ? FullScreenSelect(
+                        errors: errors,
                         title: 'Select Transfer Account',
                         enabled:
                             widget.appTransaction != null ? false : !isSaving,
