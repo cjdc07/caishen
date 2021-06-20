@@ -14,6 +14,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   final TextEditingController passwordFieldController = TextEditingController();
   String errorMessage;
   bool loading = false;
+  bool isSignUp = false;
 
   AnimationController _controller;
   Animation _animation;
@@ -60,33 +61,13 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   }
 
   void login() async {
-    bool userExists = true;
-
     if (!formKey.currentState.validate()) {
       return;
     }
 
     setLoading();
 
-    try {
-      UserCredential credentials =
-          await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: emailFieldController.text.trim(),
-        password: passwordFieldController.text.trim(),
-      );
-
-      print(credentials);
-    } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        userExists = false;
-      } else if (e.code == 'wrong-password') {
-        errorMessage = 'Wrong password provided for that user.';
-      } else {
-        errorMessage = e.message;
-      }
-    }
-
-    if (!userExists) {
+    if (isSignUp) {
       try {
         UserCredential credentials =
             await FirebaseAuth.instance.createUserWithEmailAndPassword(
@@ -105,6 +86,22 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         errorMessage = e.message;
         print(e);
       }
+    } else {
+      try {
+        UserCredential credentials =
+            await FirebaseAuth.instance.signInWithEmailAndPassword(
+          email: emailFieldController.text.trim(),
+          password: passwordFieldController.text.trim(),
+        );
+
+        print(credentials);
+      } on FirebaseAuthException catch (e) {
+        if (e.code == 'wrong-password') {
+          errorMessage = 'Wrong password provided for that user.';
+        } else {
+          errorMessage = e.message;
+        }
+      }
     }
 
     setLoading();
@@ -114,7 +111,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
 
-    _animation = Tween(begin: screenHeight / 3, end: screenHeight / 4)
+    _animation = Tween(begin: screenHeight / 3.5, end: screenHeight / 5)
         .animate(_controller)
           ..addListener(() {
             setState(() {});
@@ -125,7 +122,7 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
         margin: EdgeInsets.symmetric(horizontal: 32.0),
         child: Form(
           key: formKey,
-          child: Column(
+          child: ListView(
             children: [
               SizedBox(height: _animation.value),
               Container(
@@ -158,15 +155,23 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                   children: loading
                       ? [Center(child: CircularProgressIndicator())]
                       : [
-                          const Text(
-                            'Login/Register ',
+                          Text(
+                            isSignUp ? 'Sign Up ' : 'Login ',
                             style: TextStyle(fontSize: 16),
                           ),
-                          Icon(Icons.login_rounded),
                         ],
                 ),
                 onPressed: loading ? null : login,
               ),
+              errorMessage != null
+                  ? Container(
+                      margin: EdgeInsets.only(top: 16.0),
+                      child: Text(
+                        errorMessage,
+                        style: TextStyle(fontSize: 16, color: Colors.red),
+                      ),
+                    )
+                  : Container(),
               CupertinoButton(
                 padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
                 child: Row(
@@ -180,15 +185,23 @@ class _LoginState extends State<Login> with SingleTickerProviderStateMixin {
                 ),
                 onPressed: () => print('Forgot password'),
               ),
-              errorMessage != null
-                  ? Container(
-                      margin: EdgeInsets.only(top: 16.0),
-                      child: Text(
-                        errorMessage,
-                        style: TextStyle(fontSize: 16, color: Colors.red),
-                      ),
-                    )
-                  : Container(),
+              CupertinoButton(
+                padding: EdgeInsets.only(top: 24.0, bottom: 8.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      isSignUp ? 'Login' : 'Sign Up',
+                      style: TextStyle(fontSize: 16, color: Colors.cyan),
+                    ),
+                  ],
+                ),
+                onPressed: () {
+                  setState(() {
+                    isSignUp = !isSignUp;
+                  });
+                },
+              ),
             ],
           ),
         ),

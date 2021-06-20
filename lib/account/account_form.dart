@@ -7,6 +7,7 @@ import 'package:cjdc_money_manager/common/full_screen_select/full_screen_select.
 import 'package:cjdc_money_manager/constants.dart';
 import 'package:cjdc_money_manager/utils.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -198,119 +199,120 @@ class _AccountFormState extends State<AccountForm> {
 
                 /* Delete button if update */
                 isUpdate
-                    ? Padding(
-                        padding: EdgeInsets.only(top: 32.0),
-                        child: Container(
-                          width: MediaQuery.of(context).size.width,
-                          child: TextButton(
-                            child: Text(
-                              'Delete ${widget.account.name}',
-                              style: TextStyle(fontSize: 16, color: Colors.red),
-                            ),
-                            onPressed: () {
-                              return showDialog<void>(
-                                context: context,
-                                builder: (BuildContext context) {
-                                  return AlertDialog(
-                                    title:
-                                        Text('Delete ${widget.account.name}'),
-                                    content: SingleChildScrollView(
-                                      child: ListBody(
-                                        children: <Widget>[
-                                          Text(
-                                              'This will also delete all associated transactions.\n\nAre you sure?'),
-                                        ],
-                                      ),
-                                    ),
-                                    actions: <Widget>[
-                                      TextButton(
-                                        child: Text(
-                                          'Cancel',
-                                        ),
-                                        onPressed: () {
-                                          Navigator.pop(context);
-                                        },
-                                      ),
-                                      TextButton(
-                                        child: Text(
-                                          'Delete',
-                                          style: TextStyle(color: Colors.red),
-                                        ),
-                                        onPressed: () async {
-                                          final CollectionReference
-                                              accountsRef = FirebaseFirestore
-                                                  .instance
-                                                  .collection('accounts');
-
-                                          // Delete all associated transactions
-                                          final CollectionReference
-                                              appTransactionsRef =
-                                              FirebaseFirestore.instance
-                                                  .collection(
-                                                      'appTransactions');
-
-                                          QuerySnapshot appTransactionSnapshot =
-                                              await appTransactionsRef
-                                                  .where(
-                                                    'account',
-                                                    isEqualTo: accountsRef
-                                                        .doc(widget.account.id),
-                                                  )
-                                                  .get();
-
-                                          await Future.forEach(
-                                            appTransactionSnapshot.docs,
-                                            (QueryDocumentSnapshot doc) async {
-                                              await doc.reference.delete();
-                                            },
-                                          );
-
-                                          // Delete Account
-                                          await accountsRef
-                                              .doc(widget.account.id)
-                                              .delete();
-
-                                          List<Account> accounts =
-                                              Provider.of<AccountNotifier>(
-                                                      context,
-                                                      listen: false)
-                                                  .getAccounts();
-
-                                          List<Account> updatedAccounts =
-                                              new List.from(accounts);
-
-                                          updatedAccounts.removeWhere(
-                                            (account) =>
-                                                account.id == widget.account.id,
-                                          );
-
-                                          context
-                                              .read<AccountNotifier>()
-                                              .setSelectedAccount(
-                                                updatedAccounts.length > 0
-                                                    ? updatedAccounts[0]
-                                                    : null,
-                                              );
-
-                                          context
-                                              .read<AccountNotifier>()
-                                              .setAccounts(
-                                                updatedAccounts,
-                                                notify: true,
-                                              );
-
-                                          // Should return to cash flow page
-                                          Navigator.of(context).popUntil(
-                                            (route) => route.isFirst,
-                                          );
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                },
-                              );
-                            },
+                    ? Container(
+                        margin: EdgeInsets.symmetric(
+                          horizontal: 8.0,
+                          vertical: 32.0,
+                        ),
+                        child: CupertinoButton(
+                          color: Colors.red,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.delete),
+                            ],
                           ),
+                          onPressed: () {
+                            return showDialog<void>(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  backgroundColor: Colors.grey[850],
+                                  title: Text('Delete ${widget.account.name}'),
+                                  content: SingleChildScrollView(
+                                    child: ListBody(
+                                      children: <Widget>[
+                                        Text(
+                                            'This will also delete all associated transactions.\n\nAre you sure?'),
+                                      ],
+                                    ),
+                                  ),
+                                  actions: <Widget>[
+                                    TextButton(
+                                      child: Text(
+                                        'Cancel',
+                                      ),
+                                      onPressed: () {
+                                        Navigator.pop(context);
+                                      },
+                                    ),
+                                    TextButton(
+                                      child: Text(
+                                        'Delete',
+                                        style: TextStyle(color: Colors.red),
+                                      ),
+                                      onPressed: () async {
+                                        final CollectionReference accountsRef =
+                                            FirebaseFirestore.instance
+                                                .collection('accounts');
+
+                                        // Delete all associated transactions
+                                        final CollectionReference
+                                            appTransactionsRef =
+                                            FirebaseFirestore.instance
+                                                .collection('appTransactions');
+
+                                        QuerySnapshot appTransactionSnapshot =
+                                            await appTransactionsRef
+                                                .where(
+                                                  'account',
+                                                  isEqualTo: accountsRef
+                                                      .doc(widget.account.id),
+                                                )
+                                                .get();
+
+                                        await Future.forEach(
+                                          appTransactionSnapshot.docs,
+                                          (QueryDocumentSnapshot doc) async {
+                                            await doc.reference.delete();
+                                          },
+                                        );
+
+                                        // Delete Account
+                                        await accountsRef
+                                            .doc(widget.account.id)
+                                            .delete();
+
+                                        List<Account> accounts =
+                                            Provider.of<AccountNotifier>(
+                                                    context,
+                                                    listen: false)
+                                                .getAccounts();
+
+                                        List<Account> updatedAccounts =
+                                            new List.from(accounts);
+
+                                        updatedAccounts.removeWhere(
+                                          (account) =>
+                                              account.id == widget.account.id,
+                                        );
+
+                                        context
+                                            .read<AccountNotifier>()
+                                            .setSelectedAccount(
+                                              updatedAccounts.length > 0
+                                                  ? updatedAccounts[0]
+                                                  : null,
+                                            );
+
+                                        context
+                                            .read<AccountNotifier>()
+                                            .setAccounts(
+                                              updatedAccounts,
+                                              notify: true,
+                                            );
+
+                                        // Should return to cash flow page
+                                        Navigator.of(context).popUntil(
+                                          (route) => route.isFirst,
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                );
+                              },
+                            );
+                          },
                         ),
                       )
                     : Container(),

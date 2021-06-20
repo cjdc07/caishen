@@ -23,7 +23,6 @@ class _UserProfilePage extends State<UserProfilePage> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.logout_rounded),
                 const Text(
                   ' Logout',
                   style: TextStyle(fontSize: 16),
