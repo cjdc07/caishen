@@ -28,6 +28,40 @@
       });
     }
   </script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.1/firebase-auth.js"></script>
+  
+  <!-- Firebase Configuration -->
+  <script>
+    // Dev
+    // const firebaseConfig = {
+    //   apiKey: "AIzaSyAmndFwbuzPT_HR4LU3NOkcM4WuUF43SG8",
+    //   authDomain: "caishen-dev.firebaseapp.com",
+    //   databaseURL: "https://caishen-dev.firebaseio.com",
+    //   projectId: "caishen-dev",
+    //   storageBucket: "caishen-dev.appspot.com",
+    //   messagingSenderId: "195605927756",
+    //   appId: "1:195605927756:web:6181918f83a566e53ce1e9",
+    //   measurementId: "G-X58RJE20GS"
+    // };
+    
+    // Prod
+    const firebaseConfig = {
+      apiKey: "AIzaSyBjCB7zl6WzYzj7tg2xwDTHryHKtJWSZlg",
+      authDomain: "caishen-6ab2b.firebaseapp.com",
+      databaseURL: "https://caishen-6ab2b.firebaseio.com",
+      projectId: "caishen-6ab2b",
+      storageBucket: "caishen-6ab2b.appspot.com",
+      messagingSenderId: "23870619371",
+      appId: "1:23870619371:web:b03635371c412a48bac8ae",
+      measurementId: "G-N0J4BNVYPP"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+  </script>
+  
   <script src="main.dart.js" type="application/javascript"></script>
 </body>
 </html>
